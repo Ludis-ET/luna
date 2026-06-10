@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #faf6ee;
+    color: #2d2d2d;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #faf6ee;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #7b2d9e;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  .container-max {
+    @apply mx-auto max-w-6xl;
+  }
+
+  .section-pad {
+    @apply px-4 py-24 md:py-28;
+  }
+
+  .glass {
+    @apply rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl;
+  }
+
+  .glass-dark {
+    @apply rounded-2xl border border-white/10 bg-charcoal/80 backdrop-blur-xl;
+  }
+
+  .glass-card {
+    @apply rounded-2xl border border-brand/10 bg-white/70 shadow-lg backdrop-blur-md;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-cream shadow-brand transition duration-300 hover:scale-105 hover:shadow-glow active:scale-100;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-cream/30 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:border-glow/50 hover:text-glow;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-lavender via-brand to-magenta bg-clip-text text-transparent;
+  }
+
+  .form-input-light {
+    @apply w-full rounded-xl border border-brand/15 bg-white/80 px-4 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/35 focus:border-brand focus:ring-2 focus:ring-brand/20;
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+    background-size: 24px 24px;
+    animation: dotDrift 20s linear infinite;
+  }
+}
+
+@keyframes dotDrift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 24px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
