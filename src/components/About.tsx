@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import SectionLabel from './SectionLabel'
-import { ABOUT_TEXT } from '../data/content'
+import { ABOUT_TEXT, ABOUT_EXTENDED, STAFF_TEXT } from '../data/content'
 import { MEDIA } from '../data/media'
 
 export default function About() {
@@ -22,16 +22,15 @@ export default function About() {
             A home built on <span className="text-brand">compassion</span>
           </h2>
           <p className="mt-6 text-base leading-relaxed text-charcoal/75 md:text-lg">{ABOUT_TEXT}</p>
+          <p className="mt-4 text-base leading-relaxed text-charcoal/70">{ABOUT_EXTENDED}</p>
 
           <div className="mt-8 rounded-2xl border border-brand/15 bg-white/60 p-6">
-            <p className="font-semibold text-charcoal">RN-owned & operated</p>
-            <p className="mt-2 text-sm leading-relaxed text-charcoal/60">
-              Expertise in geriatric care, mental health, and DDA services.
-            </p>
+            <p className="font-semibold text-charcoal">Our staff</p>
+            <p className="mt-2 text-sm leading-relaxed text-charcoal/65">{STAFF_TEXT}</p>
           </div>
 
           <p className="mt-6 text-sm italic text-charcoal/50">
-            We welcome all cultures, ethnicities, and religious beliefs — every resident is family.
+            We would welcome the opportunity to earn your trust and show you the best care in the industry.
           </p>
         </motion.div>
 
