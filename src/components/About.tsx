@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import SectionLabel from './SectionLabel'
-import { ABOUT_PARAGRAPHS, PHILOSOPHY, VALUES, STAFF_TEXT, STAFF_CREDENTIALS } from '../data/content'
+import { ABOUT_PARAGRAPHS, PHILOSOPHY, VALUES, STAFF_TEXT } from '../data/content'
 import { MEDIA } from '../data/media'
 
 export default function About() {
@@ -46,7 +46,7 @@ export default function About() {
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="relative"
+          className="relative hidden md:block"
         >
           <div className="overflow-hidden rounded-2xl shadow-[0_24px_60px_-20px_rgba(123,45,158,0.18)]">
             <img
@@ -95,35 +95,21 @@ export default function About() {
         </ul>
       </div>
 
-      {/* Our Staff: brand-gradient band with credential pills (distinct from the cards above) */}
+      {/* Our Staff: elegant, clean card matching page themes */}
       <div className="container-max mt-16 px-6 md:mt-20">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-magenta p-8 text-cream shadow-[0_30px_70px_-25px_rgba(123,45,158,0.5)] md:p-12"
+          className="relative overflow-hidden rounded-3xl border border-brand/15 bg-white/70 p-8 text-charcoal shadow-sm md:p-12 backdrop-blur-sm"
         >
-          <div className="dot-grid pointer-events-none absolute inset-0 opacity-10" aria-hidden />
-          <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-glow/20 blur-3xl" />
-
           <div className="relative">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-cream/70">Our Staff</p>
-            <h3 className="mt-2 max-w-2xl font-serif text-2xl font-semibold md:text-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand">Our Staff</p>
+            <h3 className="mt-2 max-w-2xl font-serif text-2xl font-semibold text-charcoal md:text-3xl">
               Trained, trusted, and always learning
             </h3>
-            <p className="mt-4 max-w-3xl leading-relaxed text-cream/85">{STAFF_TEXT}</p>
-
-            <div className="mt-7 flex flex-wrap gap-2.5">
-              {STAFF_CREDENTIALS.map((credential) => (
-                <span
-                  key={credential}
-                  className="rounded-full bg-white/12 px-4 py-2 text-sm font-medium text-cream ring-1 ring-white/25 backdrop-blur-sm"
-                >
-                  {credential}
-                </span>
-              ))}
-            </div>
+            <p className="mt-4 max-w-3xl leading-relaxed text-charcoal/70">{STAFF_TEXT}</p>
           </div>
         </motion.div>
       </div>
