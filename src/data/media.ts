@@ -9,6 +9,9 @@ export const MEDIA = {
   dining: asset('WhatsApp Image 2026-06-10 at 4.24.39 PM (1).jpeg'),
   kitchen: asset('WhatsApp Image 2026-06-10 at 4.24.39 PM (2).jpeg'),
   livingRoom: asset('WhatsApp Image 2026-06-10 at 4.24.40 PM (2).jpeg'),
+  livingCozy: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM.jpeg'),
+  bedroomAccessible: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM (1).jpeg'),
+  bedroomCozy: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM (2).jpeg'),
 } as const
 
 // Gallery doubles as the resident experience: each image carries a short
@@ -27,6 +30,27 @@ export const GALLERY_IMAGES = [
     title: 'A place to call home',
     caption: 'Warm living spaces designed for comfort and accessibility',
     alt: 'Living room with fireplace',
+  },
+  {
+    src: MEDIA.livingCozy,
+    tag: 'Living',
+    title: 'Warm and inviting spaces',
+    caption: 'Common areas designed for relaxation, community, and visiting family',
+    alt: 'Cozy living room area',
+  },
+  {
+    src: MEDIA.bedroomAccessible,
+    tag: 'Living',
+    title: 'Comfort meets accessibility',
+    caption: 'Private resident bedrooms featuring step-in bathrooms and safety grab bars',
+    alt: 'Bedroom with open view to accessible bathroom',
+  },
+  {
+    src: MEDIA.bedroomCozy,
+    tag: 'Living',
+    title: 'Cozy, private retreats',
+    caption: 'Bright, cheerful bedrooms designed with personal comfort in mind',
+    alt: 'Resident bedroom with cozy quilted bedding',
   },
   {
     src: MEDIA.dining,

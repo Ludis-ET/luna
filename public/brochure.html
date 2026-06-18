@@ -7,306 +7,797 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --brand: #7b2d9e;
-        --magenta: #d10056;
-        --cream: #faf6ee;
+        --brand-deep: #2e1447; /* Luxury Royal Purple */
+        --brand-main: #58217a; /* Medium Accent Purple */
+        --accent-gold: #c5a880; /* Elegant Warm Gold */
+        --accent-gold-dark: #a8885c;
+        --cream-bg: #faf7f2; /* High-end Editorial Cream */
         --charcoal: #2d2d2d;
-        --glow: #ffb84d;
-        --lavender: #c8a8e9;
+        --text-muted: #555555;
+        --white: #ffffff;
       }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
+      * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+      }
+      
       body {
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: 'Outfit', system-ui, sans-serif;
         color: var(--charcoal);
-        background: #ece6dc;
+        background: #e2dbd0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 32px;
-        padding: 36px 16px 72px;
+        gap: 36px;
+        padding: 40px 16px 80px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
+      /* Toolbar styles */
       .toolbar {
         position: sticky;
-        top: 0;
-        z-index: 20;
+        top: 16px;
+        z-index: 50;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: center;
-        gap: 12px;
+        justify-content: space-between;
+        gap: 16px;
         width: 100%;
         max-width: 8.5in;
-        padding: 14px 18px;
-        background: rgba(255, 255, 255, 0.92);
-        border: 1px solid rgba(123, 45, 158, 0.15);
-        border-radius: 16px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 10px 30px -12px rgba(45, 45, 45, 0.25);
+        padding: 14px 24px;
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(197, 168, 128, 0.3);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 16px 40px -15px rgba(45, 45, 45, 0.15);
       }
-      .toolbar p { font-size: 13px; color: #5a5a5a; }
-      .btn {
-        appearance: none; border: none; cursor: pointer; font: inherit;
-        font-weight: 600; font-size: 14px; color: var(--cream);
-        background: var(--brand); padding: 11px 24px; border-radius: 999px;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      
+      .toolbar-text {
+        font-size: 13.5px;
+        color: #555555;
+        font-weight: 400;
       }
-      .btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(123, 45, 158, 0.4); }
+      
+      .toolbar-text strong {
+        color: var(--brand-deep);
+        font-weight: 600;
+      }
 
+      .btn {
+        appearance: none;
+        border: none;
+        cursor: pointer;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--cream-bg);
+        background: var(--brand-deep);
+        padding: 12px 28px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(46, 20, 71, 0.2);
+      }
+      
+      .btn:hover {
+        transform: translateY(-2px);
+        background: var(--brand-main);
+        box-shadow: 0 8px 20px rgba(46, 20, 71, 0.35);
+      }
+      
+      .btn svg {
+        transition: transform 0.25s ease;
+      }
+      
+      .btn:hover svg {
+        transform: translateY(2px);
+      }
+
+      /* Page Structure */
       .page {
         width: 8.5in;
-        min-height: 11in;
-        background: var(--cream);
-        box-shadow: 0 22px 60px -24px rgba(45, 45, 45, 0.4);
+        height: 11in;
+        background: var(--cream-bg);
+        box-shadow: 0 30px 70px -20px rgba(45, 45, 45, 0.25);
         position: relative;
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        padding: 0.5in;
       }
 
-      /* ---------- COVER ---------- */
-      .cover-hero { position: relative; height: 5in; color: var(--cream); }
-      .cover-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      /* Inset Double Border */
+      .border-inset {
+        position: absolute;
+        inset: 0.25in;
+        border: 1px solid var(--accent-gold);
+        pointer-events: none;
+        z-index: 10;
+      }
+      
+      .border-inset::after {
+        content: '';
+        position: absolute;
+        inset: 4px;
+        border: 1px solid var(--accent-gold);
+        opacity: 0.45;
+      }
+
+      .content-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0.25in;
+      }
+
+      /* ---------- COVER HERO ---------- */
+      .cover-hero {
+        position: relative;
+        height: 4.8in;
+        margin: -0.25in -0.25in 0;
+        overflow: hidden;
+      }
+      
+      .cover-hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
       .cover-hero .veil {
-        position: absolute; inset: 0;
-        background: linear-gradient(180deg, rgba(45, 30, 60, 0.25) 0%, rgba(123, 45, 158, 0.55) 70%, rgba(123, 45, 158, 0.9) 100%);
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, 
+          rgba(46, 20, 71, 0.2) 0%, 
+          rgba(46, 20, 71, 0.5) 60%, 
+          rgba(46, 20, 71, 0.92) 100%);
       }
-      .cover-content { position: absolute; inset: 0; padding: 0.7in; display: flex; flex-direction: column; justify-content: space-between; }
-      .brand-row { display: flex; align-items: center; gap: 14px; }
+      
+      .cover-content {
+        position: absolute;
+        inset: 0;
+        padding: 0.5in;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--cream-bg);
+      }
+      
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
       .logo {
-        width: 56px; height: 56px; border-radius: 50%;
-        background: rgba(255, 255, 255, 0.15); border: 1.5px solid rgba(255, 255, 255, 0.5);
-        display: flex; align-items: center; justify-content: center;
-        font-family: 'Playfair Display', serif; font-weight: 700; font-size: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--accent-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 32px;
+        color: var(--accent-gold);
       }
-      .brand-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; line-height: 1; }
-      .brand-sub { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85; margin-top: 3px; }
-      .cover-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 46px; line-height: 1.05; max-width: 6in; }
-      .cover-tag { margin-top: 14px; font-size: 15px; max-width: 5in; opacity: 0.92; }
+      
+      .brand-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 700;
+        font-size: 32px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      
+      .brand-sub {
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        margin-top: 5px;
+        font-weight: 500;
+      }
+      
+      .cover-title-group {
+        max-width: 5.8in;
+      }
+      
+      .cover-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-style: italic;
+        font-size: 50px;
+        line-height: 1.1;
+        color: var(--white);
+      }
+      
+      .cover-tag {
+        margin-top: 14px;
+        font-size: 14.5px;
+        line-height: 1.6;
+        opacity: 0.9;
+        font-weight: 300;
+        border-left: 2px solid var(--accent-gold);
+        padding-left: 14px;
+      }
 
+      /* Contact Strip */
       .cover-strip {
-        background: var(--charcoal); color: var(--cream);
-        display: flex; flex-wrap: wrap; gap: 6px 28px;
-        padding: 0.32in 0.7in; font-size: 12.5px;
+        background: var(--brand-deep);
+        color: var(--cream-bg);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 20px;
+        padding: 16px 24px;
+        margin: 0 -0.25in;
+        font-size: 12px;
+        border-bottom: 2px solid var(--accent-gold);
       }
-      .cover-strip b { color: var(--glow); font-weight: 600; }
+      
+      .cover-strip span {
+        font-weight: 300;
+      }
+      
+      .cover-strip b {
+        color: var(--accent-gold);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        margin-right: 4px;
+      }
 
-      .cover-welcome { padding: 0.55in 0.7in 0.7in; flex: 1; }
+      /* Sections & Grid Layout */
+      .section-welcome {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 24px 8px 8px;
+      }
+      
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent-gold-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .eyebrow::after {
+        content: '';
+        height: 1px;
+        width: 30px;
+        background: var(--accent-gold);
+        display: inline-block;
+      }
+      
+      h2.title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 34px;
+        line-height: 1.2;
+        color: var(--brand-deep);
+        margin-bottom: 14px;
+      }
+      
+      p.body {
+        font-size: 13.5px;
+        line-height: 1.7;
+        color: var(--charcoal);
+        margin-top: 10px;
+        font-weight: 400;
+      }
 
-      /* ---------- SECTIONS ---------- */
-      .pad { padding: 0.6in 0.7in; }
-      .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brand); }
-      h2.title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; margin-top: 6px; color: var(--charcoal); }
-      h3.sub { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 17px; color: var(--brand); margin-bottom: 8px; }
-      p.body { font-size: 13.5px; line-height: 1.7; color: #404040; margin-top: 12px; }
+      .welcome-body::first-letter {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3.8rem;
+        font-weight: 600;
+        float: left;
+        line-height: 0.8;
+        margin-right: 0.12em;
+        margin-top: 0.05em;
+        color: var(--brand-main);
+      }
 
+      /* Stylized Quote Callout */
       .quote {
-        margin-top: 18px; padding: 22px 26px;
-        background: linear-gradient(135deg, rgba(123, 45, 158, 0.08), rgba(209, 0, 86, 0.06));
-        border-left: 4px solid var(--brand); border-radius: 10px;
-        font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; line-height: 1.55; color: #3a2a45;
+        margin: 22px 0;
+        padding: 22px 28px;
+        background: rgba(197, 168, 128, 0.08);
+        border-left: 3px solid var(--accent-gold);
+        border-radius: 0 12px 12px 0;
+        position: relative;
+      }
+      
+      .quote-text {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 17.5px;
+        line-height: 1.55;
+        color: var(--brand-deep);
+        font-weight: 500;
+      }
+      
+      .quote::before {
+        content: '“';
+        position: absolute;
+        left: 10px;
+        top: -10px;
+        font-size: 60px;
+        font-family: 'Cormorant Garamond', serif;
+        color: var(--accent-gold);
+        opacity: 0.25;
+        line-height: 1;
       }
 
-      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 34px; margin-top: 18px; }
-      ul.feat { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-      ul.feat li { position: relative; padding-left: 18px; font-size: 12.5px; line-height: 1.45; color: #3d3d3d; }
+      .philosophy-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-style: italic;
+        font-size: 20px;
+        color: var(--brand-main);
+        margin-top: 14px;
+        margin-bottom: 4px;
+      }
+
+      /* PAGE 2 CONTENTS */
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 36px;
+        margin-top: 12px;
+        flex: 1;
+      }
+      
+      .column-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .column-right {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      h3.sub {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 21px;
+        color: var(--brand-deep);
+        margin-bottom: 12px;
+        border-bottom: 1px solid rgba(197, 168, 128, 0.3);
+        padding-bottom: 6px;
+        letter-spacing: -0.01em;
+      }
+      
+      ul.feat {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      
+      ul.feat li {
+        position: relative;
+        padding-left: 20px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        color: var(--charcoal);
+        font-weight: 400;
+      }
+      
       ul.feat li::before {
-        content: ''; position: absolute; left: 0; top: 6px;
-        width: 7px; height: 7px; border-radius: 50%; background: var(--brand);
+        content: '◆';
+        position: absolute;
+        left: 0;
+        top: 2px;
+        font-size: 7px;
+        color: var(--accent-gold);
       }
-      .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
-      .chip { font-size: 11.5px; font-weight: 500; color: var(--brand); background: rgba(123, 45, 158, 0.09); padding: 6px 12px; border-radius: 999px; }
 
-      .photo-band { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 2.6in; }
-      .photo-band img { width: 100%; height: 100%; object-fit: cover; }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      
+      .chip {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--brand-deep);
+        background: rgba(88, 33, 122, 0.06);
+        border: 1px solid rgba(88, 33, 122, 0.12);
+        padding: 5px 10px;
+        border-radius: 6px;
+      }
 
+      .photo-band {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        height: 1.8in;
+        margin: 16px 0;
+      }
+      
+      .photo-band-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--accent-gold);
+        height: 100%;
+        position: relative;
+      }
+      
+      .photo-band img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .photo-band-label {
+        position: absolute;
+        bottom: 0;
+        inset-x: 0;
+        background: rgba(46, 20, 71, 0.75);
+        color: var(--cream-bg);
+        font-size: 10px;
+        text-align: center;
+        padding: 4px 0;
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+      }
+
+      /* Call To Action Box */
       .cta {
-        margin: 0 0.7in 0.7in; padding: 28px 32px; border-radius: 16px;
-        background: linear-gradient(135deg, var(--brand), var(--magenta)); color: var(--cream);
+        padding: 24px;
+        border-radius: 16px;
+        background: var(--brand-deep);
+        border: 1px solid var(--accent-gold);
+        color: var(--cream-bg);
+        position: relative;
       }
-      .cta h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
-      .cta .rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; margin-top: 16px; font-size: 13px; }
-      .cta .rows .lbl { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.8; }
-      .cta .rows .val { font-weight: 600; font-size: 14px; }
-      .cta .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-      .cta .badge { font-size: 11px; font-weight: 600; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 12px; border-radius: 999px; }
+      
+      .cta::after {
+        content: '';
+        position: absolute;
+        inset: 4px;
+        border: 1px solid rgba(197, 168, 128, 0.35);
+        border-radius: 12px;
+        pointer-events: none;
+      }
+      
+      .cta h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--accent-gold);
+        margin-bottom: 6px;
+        text-align: center;
+      }
+      
+      .cta-desc {
+        font-size: 12px;
+        opacity: 0.85;
+        text-align: center;
+        margin-bottom: 16px;
+        font-weight: 300;
+        padding: 0 10px;
+      }
+      
+      .cta .rows {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 20px;
+        font-size: 12px;
+        position: relative;
+        z-index: 10;
+      }
+      
+      .cta .rows .lbl {
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        margin-bottom: 2px;
+        font-weight: 600;
+      }
+      
+      .cta .rows .val {
+        font-weight: 500;
+        font-size: 13px;
+        color: var(--white);
+      }
+      
+      .cta .badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 18px;
+        position: relative;
+        z-index: 10;
+      }
+      
+      .cta .badge {
+        font-size: 10px;
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(197, 168, 128, 0.3);
+        color: var(--cream-bg);
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
 
-      .foot { padding: 0 0.7in 0.5in; font-size: 10.5px; color: #8a8276; }
+      /* Footers */
+      .foot {
+        font-size: 10px;
+        color: #888276;
+        text-align: center;
+        border-top: 1px solid rgba(197, 168, 128, 0.25);
+        padding-top: 10px;
+        margin-top: 12px;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+      }
 
-      .caption { font-size: 12px; color: #6a6a6a; letter-spacing: 0.05em; }
+      .caption {
+        font-size: 12px;
+        color: #7c7569;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 16px;
+      }
 
       @media print {
-        @page { size: Letter; margin: 0; }
-        body { background: #fff; padding: 0; gap: 0; display: block; }
-        .toolbar, .caption { display: none !important; }
-        .page { box-shadow: none; page-break-after: always; }
-        .page:last-child { page-break-after: auto; }
+        @page { 
+          size: Letter; 
+          margin: 0; 
+        }
+        body { 
+          background: #fff; 
+          padding: 0; 
+          gap: 0; 
+          display: block; 
+        }
+        .toolbar, .caption { 
+          display: none !important; 
+        }
+        .page { 
+          box-shadow: none; 
+          page-break-after: always; 
+        }
+        .page:last-child { 
+          page-break-after: auto; 
+        }
       }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <p>Two-page brochure below. Click “Save as PDF” and choose “Save as PDF” as the printer.</p>
-      <button class="btn" onclick="window.print()">⬇ Save as PDF</button>
+      <div class="toolbar-text">
+        Ready to print or save. Destination should be set to <strong>Save as PDF</strong>.
+      </div>
+      <button class="btn" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Save as PDF
+      </button>
     </div>
 
     <!-- ============ PAGE 1 ============ -->
-    <p class="caption">PAGE 1</p>
+    <p class="caption">Page 1 — Welcome & Overview</p>
     <section class="page">
-      <div class="cover-hero">
-        <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.41%20PM.jpeg" alt="Luna Cottage exterior" />
-        <div class="veil"></div>
-        <div class="cover-content">
-          <div class="brand-row">
-            <div class="logo">L</div>
-            <div>
-              <div class="brand-name">Luna Cottage</div>
-              <div class="brand-sub">Adult Family Home</div>
+      <div class="border-inset"></div>
+      <div class="content-wrapper">
+        <div class="cover-hero">
+          <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.41%20PM.jpeg" alt="Luna Cottage Exterior" />
+          <div class="veil"></div>
+          <div class="cover-content">
+            <div class="brand-row">
+              <div class="logo">L</div>
+              <div>
+                <div class="brand-name">Luna Cottage</div>
+                <div class="brand-sub">Adult Family Home</div>
+              </div>
             </div>
-          </div>
-          <div>
-            <div class="cover-title">Where care feels like home.</div>
-            <div class="cover-tag">
-              A licensed, RN-owned adult family home in a peaceful South Everett neighborhood, caring for up to six residents.
+            <div class="cover-title-group">
+              <div class="cover-title">Where care feels like home.</div>
+              <div class="cover-tag">
+                A licensed, RN-owned adult family home in a peaceful South Everett neighborhood, caring for up to six residents.
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="cover-strip">
-        <span><b>Owner:</b> Fitsum Awoke, RN, BSN</span>
-        <span><b>Call or Text:</b> 206-398-9638</span>
-        <span><b>Office:</b> 425-337-9724</span>
-        <span><b>Email:</b> Emunetluna@gmail.com</span>
-      </div>
-
-      <div class="cover-welcome">
-        <p class="eyebrow">Welcome</p>
-        <h2 class="title">A home built on compassion</h2>
-        <p class="body">
-          Luna Cottage Adult Family Home is a licensed, RN-owned and managed care home located in a peaceful residential
-          neighborhood in South Everett. We provide a warm, safe, and comfortable environment for up to six residents,
-          offering personalized care tailored to each individual's needs, preferences, and abilities.
-        </p>
-        <p class="body">
-          Our home is designed to feel like family, where residents are treated with dignity, respect, and compassion while
-          receiving the support they need to live comfortably and safely. Small-setting senior care is a wonderful
-          alternative to a nursing home or large assisted living facility.
-        </p>
-
-        <div class="quote">
-          “Our mission is to provide high-quality, compassionate, and individualized care in a home-like setting where
-          every resident feels valued, safe, and supported.”
+        <div class="cover-strip">
+          <span><b>Owner:</b> Fitsum Awoke, RN, BSN</span>
+          <span><b>Call or Text:</b> 206-398-9638</span>
+          <span><b>Office:</b> 425-337-9724</span>
+          <span><b>Email:</b> Emunetluna@gmail.com</span>
         </div>
 
-        <div style="margin-top: 22px">
-          <h3 class="sub">Our philosophy of care</h3>
-          <p class="body" style="margin-top: 0">
-            Our philosophy is centered on person-centered care. We believe each resident is unique and deserves care that
-            respects their history, preferences, and current abilities, in a nurturing environment that supports physical,
-            emotional, and social well-being.
+        <div class="section-welcome">
+          <p class="eyebrow">Welcome</p>
+          <h2 class="title">A home built on compassion</h2>
+          <p class="body welcome-body">
+            Luna Cottage Adult Family Home is a licensed, RN-owned and managed care home located in a peaceful residential
+            neighborhood in South Everett. We provide a warm, safe, and comfortable environment for up to six residents,
+            offering personalized care tailored to each individual's needs, preferences, and abilities.
           </p>
+          <p class="body">
+            Our home is designed to feel like family, where residents are treated with dignity, respect, and compassion while
+            receiving the support they need to live comfortably and safely. Small-setting senior care is a wonderful
+            alternative to a nursing home or large assisted living facility.
+          </p>
+
+          <div class="quote">
+            <div class="quote-text">
+              Our mission is to provide high-quality, compassionate, and individualized care in a home-like setting where
+              every resident feels valued, safe, and supported.
+            </div>
+          </div>
+
+          <div>
+            <h4 class="philosophy-title">Our philosophy of care</h4>
+            <p class="body" style="margin-top: 0">
+              Our philosophy is centered on person-centered care. We believe each resident is unique and deserves care that
+              respects their history, preferences, and current abilities, in a nurturing environment that supports physical,
+              emotional, and social well-being.
+            </p>
+          </div>
+        </div>
+
+        <div class="foot">
+          Luna Cottage Adult Family Home · 10524 23rd Dr SE, Everett, WA 98208 · Page 1 of 2
         </div>
       </div>
-
-      <div class="foot">Luna Cottage Adult Family Home · 10524 23rd Dr SE, Everett, WA 98208 · Page 1 of 2</div>
     </section>
 
     <!-- ============ PAGE 2 ============ -->
-    <p class="caption">PAGE 2</p>
+    <p class="caption">Page 2 — Care, Specializations & Contact</p>
     <section class="page">
-      <div class="pad">
-        <p class="eyebrow">Services &amp; Care</p>
-        <h2 class="title">Comprehensive, individualized care</h2>
-
+      <div class="border-inset"></div>
+      <div class="content-wrapper">
         <div class="grid2">
-          <div>
-            <h3 class="sub">Health services &amp; daily care</h3>
-            <ul class="feat">
-              <li>RN case management &amp; individual care plans</li>
-              <li>24-hour care with awake night staff</li>
-              <li>Medication administration, supervision &amp; management</li>
-              <li>Diabetic management &amp; insulin (nurse-delegated)</li>
-              <li>Wound care, eye drops, injections &amp; catheter care</li>
-              <li>Glucose, blood pressure &amp; weight charting</li>
-              <li>Feeding, bathing, dressing &amp; grooming assistance</li>
-              <li>In-home doctor &amp; podiatrist visits</li>
-              <li>Doctor appointments &amp; transportation coordination</li>
-              <li>Housekeeping, laundry &amp; call buttons in every room</li>
-            </ul>
+          <div class="column-left">
+            <div>
+              <p class="eyebrow">Care Services</p>
+              <h2 class="title">Health & Daily Care</h2>
+              <ul class="feat">
+                <li>RN case management &amp; individual care plans</li>
+                <li>24-hour care with awake night staff</li>
+                <li>Medication administration, supervision &amp; management</li>
+                <li>Diabetic management &amp; insulin (nurse-delegated)</li>
+                <li>Wound care, eye drops, injections &amp; catheter care</li>
+                <li>Glucose, blood pressure &amp; weight charting</li>
+                <li>Feeding, bathing, dressing &amp; grooming assistance</li>
+                <li>In-home doctor &amp; podiatrist visits</li>
+                <li>Doctor appointments &amp; transportation coordination</li>
+                <li>Housekeeping, laundry &amp; call buttons in every room</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="sub" style="margin-top: 16px; margin-bottom: 8px">Activities &amp; Well-Being</h3>
+              <div class="chips">
+                <span class="chip">Group socialization</span>
+                <span class="chip">Music, reading, games &amp; movies</span>
+                <span class="chip">Birthday &amp; holiday celebrations</span>
+                <span class="chip">Outdoor walks &amp; barbeques</span>
+                <span class="chip">Educational &amp; cultural activities</span>
+                <span class="chip">Fitness &amp; well-being programs</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <h3 class="sub">We specialize in</h3>
-            <div class="chips">
-              <span class="chip">Alzheimer's</span>
-              <span class="chip">Dementia</span>
-              <span class="chip">Parkinson's</span>
-              <span class="chip">Stroke</span>
-              <span class="chip">Cardiac</span>
-              <span class="chip">Diabetes</span>
-              <span class="chip">Hospice care</span>
-              <span class="chip">Mental health</span>
-              <span class="chip">Incontinence</span>
-              <span class="chip">Arthritis</span>
-              <span class="chip">Congestive heart failure</span>
-              <span class="chip">Oxygen therapy</span>
-              <span class="chip">Rehab needs</span>
-              <span class="chip">DDA services</span>
+
+          <div class="column-right">
+            <div>
+              <h3 class="sub">Specializations</h3>
+              <div class="chips">
+                <span class="chip">Alzheimer's</span>
+                <span class="chip">Dementia</span>
+                <span class="chip">Parkinson's</span>
+                <span class="chip">Stroke</span>
+                <span class="chip">Cardiac</span>
+                <span class="chip">Diabetes</span>
+                <span class="chip">Hospice care</span>
+                <span class="chip">Mental health</span>
+                <span class="chip">Incontinence</span>
+                <span class="chip">Arthritis</span>
+                <span class="chip">Congestive heart failure</span>
+                <span class="chip">Oxygen therapy</span>
+                <span class="chip">Rehab needs</span>
+                <span class="chip">DDA services</span>
+              </div>
             </div>
 
-            <h3 class="sub" style="margin-top: 22px">Amenities</h3>
-            <ul class="feat">
-              <li>Private or semi-private rooms</li>
-              <li>Wheelchair &amp; walker accessible throughout</li>
-              <li>Handicap-friendly bathrooms &amp; walk-in showers</li>
-              <li>Cable TV in each room &amp; large dining room</li>
-              <li>Backyard, patio &amp; secure surroundings</li>
-            </ul>
+            <div>
+              <h3 class="sub">Home Amenities</h3>
+              <ul class="feat">
+                <li>Private or semi-private rooms</li>
+                <li>Wheelchair &amp; walker accessible throughout</li>
+                <li>Handicap-friendly bathrooms &amp; walk-in showers</li>
+                <li>Cable TV in each room &amp; large dining room</li>
+                <li>Backyard, patio &amp; secure surroundings</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="photo-band">
-        <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.40%20PM%20%282%29.jpeg" alt="Living room" />
-        <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.39%20PM%20%281%29.jpeg" alt="Dining room" />
-      </div>
+        <div class="photo-band">
+          <div class="photo-band-wrapper">
+            <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.40%20PM%20%282%29.jpeg" alt="Living room" />
+            <div class="photo-band-label">Warm, inviting living area</div>
+          </div>
+          <div class="photo-band-wrapper">
+            <img src="/assets/WhatsApp%20Image%202026-06-10%20at%204.24.39%20PM%20%281%29.jpeg" alt="Dining room" />
+            <div class="photo-band-label">Family-style dining space</div>
+          </div>
+        </div>
 
-      <div class="pad" style="padding-top: 0.45in; padding-bottom: 0.4in">
-        <h3 class="sub">Activities &amp; well-being</h3>
-        <div class="chips">
-          <span class="chip">Group socialization</span>
-          <span class="chip">Music, reading, games &amp; movies</span>
-          <span class="chip">Birthday &amp; holiday celebrations</span>
-          <span class="chip">Outdoor walks &amp; barbeques</span>
-          <span class="chip">Educational &amp; cultural activities</span>
-          <span class="chip">Fitness &amp; well-being programs</span>
+        <div class="cta">
+          <h3>Schedule a Visit</h3>
+          <p class="cta-desc">
+            We would welcome the opportunity to earn your trust and show you the best care in the industry.
+          </p>
+          <div class="rows">
+            <div>
+              <div class="lbl">Call or Text</div>
+              <div class="val">206-398-9638</div>
+            </div>
+            <div>
+              <div class="lbl">Office</div>
+              <div class="val">425-337-9724</div>
+            </div>
+            <div>
+              <div class="lbl">Email</div>
+              <div class="val" style="font-size: 11.5px;">Emunetluna@gmail.com</div>
+            </div>
+            <div>
+              <div class="lbl">Address</div>
+              <div class="val" style="font-size: 11.5px;">10524 23rd Dr SE, Everett, WA 98208</div>
+            </div>
+          </div>
+          <div class="badges">
+            <span class="badge">Private pay &amp; Medicaid accepted</span>
+            <span class="badge">Tours by appointment</span>
+            <span class="badge">Welcoming to all cultures</span>
+          </div>
+        </div>
+
+        <div class="foot">
+          Luna Cottage Adult Family Home · Owner: Fitsum Awoke, RN, BSN · Page 2 of 2
         </div>
       </div>
-
-      <div class="cta">
-        <h3>Schedule a visit</h3>
-        <p style="margin-top: 6px; font-size: 13px; opacity: 0.92">
-          We would welcome the opportunity to earn your trust and show you the best care in the industry.
-        </p>
-        <div class="rows">
-          <div><div class="lbl">Call or Text</div><div class="val">206-398-9638</div></div>
-          <div><div class="lbl">Office</div><div class="val">425-337-9724</div></div>
-          <div><div class="lbl">Email</div><div class="val">Emunetluna@gmail.com</div></div>
-          <div><div class="lbl">Address</div><div class="val">10524 23rd Dr SE, Everett, WA 98208</div></div>
-        </div>
-        <div class="badges">
-          <span class="badge">Private pay &amp; Medicaid accepted</span>
-          <span class="badge">Tours by appointment</span>
-          <span class="badge">Welcoming to all cultures &amp; beliefs</span>
-        </div>
-      </div>
-
-      <div class="foot">Luna Cottage Adult Family Home · Owner: Fitsum Awoke, RN, BSN · Page 2 of 2</div>
     </section>
   </body>
 </html>

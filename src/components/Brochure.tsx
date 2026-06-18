@@ -42,6 +42,32 @@ function downloadVCard() {
   URL.revokeObjectURL(url)
 }
 
+function printDocument(url: string) {
+  const frameId = 'print-frame-element'
+  let iframe = document.getElementById(frameId) as HTMLIFrameElement | null
+  if (iframe) {
+    iframe.remove()
+  }
+  iframe = document.createElement('iframe')
+  iframe.id = frameId
+  iframe.style.position = 'fixed'
+  iframe.style.right = '0'
+  iframe.style.bottom = '0'
+  iframe.style.width = '0'
+  iframe.style.height = '0'
+  iframe.style.border = '0'
+  iframe.src = url
+  
+  document.body.appendChild(iframe)
+  
+  iframe.onload = () => {
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.focus()
+      iframe.contentWindow.print()
+    }
+  }
+}
+
 const QuickIcon = ({ d }: { d: string }) => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d={d} />
@@ -81,15 +107,14 @@ export default function Brochure() {
                   <span className="h-2.5 w-2.5 rounded-full bg-brand/60" />
                   <span className="ml-2 hidden sm:inline">Luna-Cottage-Brochure.pdf</span>
                 </div>
-                <a
-                  href={BROCHURE.brochureUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => printDocument(BROCHURE.brochureUrl)}
                   className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-cream transition hover:bg-brand/90"
                 >
                   <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
                   Download PDF
-                </a>
+                </button>
               </div>
 
               {/* the long page (data-lenis-prevent lets it scroll natively inside smooth-scroll) */}
@@ -125,35 +150,35 @@ export default function Brochure() {
                   }`}
                 >
                   {/* FRONT */}
-                  <div className="backface-hidden absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-magenta p-6 text-cream shadow-[0_24px_60px_-20px_rgba(123,45,158,0.6)]">
-                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-10" aria-hidden />
-                    <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-glow/20 blur-2xl" />
+                  <div className="backface-hidden absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl bg-[#2e1447] p-5 text-[#faf7f2] shadow-[0_24px_60px_-20px_rgba(46,20,71,0.6)] border border-[#c5a880]/30">
+                    <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/30 rounded-xl" />
                     <div className="relative flex items-center gap-3">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/15 font-serif text-xl font-bold">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#c5a880] bg-white/5 font-serif text-lg font-bold text-[#c5a880]">
                         L
                       </span>
                       <div>
-                        <p className="font-serif text-lg font-bold leading-none">Luna Cottage</p>
-                        <p className="mt-1 text-[9px] uppercase tracking-[0.2em] text-cream/80">
+                        <p className="font-serif text-base font-bold leading-none text-[#faf7f2]">Luna Cottage</p>
+                        <p className="mt-1 text-[8px] uppercase tracking-[0.2em] text-[#c5a880] font-semibold">
                           Adult Family Home
                         </p>
                       </div>
                     </div>
-                    <div className="relative">
-                      <p className="font-serif text-lg font-semibold">{SITE.owner}</p>
-                      <p className="text-[11px] text-cream/85">Owner &amp; Registered Nurse</p>
+                    <div>
+                      <p className="font-serif text-base font-semibold text-[#faf7f2]">{SITE.owner}</p>
+                      <p className="text-[10px] text-[#c5a880] font-medium tracking-wide uppercase">Owner &amp; Registered Nurse</p>
                     </div>
-                    <p className="relative text-[10px] italic text-cream/80">Where care feels like home.</p>
+                    <p className="text-[9px] font-serif italic text-[#faf7f2]/80">Where care feels like home.</p>
                   </div>
 
                   {/* BACK */}
-                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-brand/15 bg-cream p-6 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.45)]">
-                    <p className="mb-1 font-serif text-sm font-bold text-brand">Get in touch</p>
+                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-[#c5a880]/40 bg-[#faf7f2] p-5 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.25)]">
+                    <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/25 rounded-xl" />
+                    <p className="mb-0.5 font-serif text-xs font-bold uppercase tracking-wider text-[#2e1447]">Get in touch</p>
                     <CardLine label="Call / Text" value={primaryPhone.number} />
                     {officePhone && <CardLine label="Office" value={officePhone.number} />}
                     <CardLine label="Email" value={SITE.email} />
                     <CardLine label="Address" value="10524 23rd Dr SE, Everett, WA 98208" />
-                    <span className="mt-2 w-fit rounded-full bg-brand/10 px-3 py-1 text-[9px] font-semibold uppercase tracking-wide text-brand">
+                    <span className="mt-1 w-fit rounded bg-[#2e1447]/5 border border-[#2e1447]/15 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-[#2e1447]">
                       Private pay &amp; Medicaid
                     </span>
                   </div>
@@ -179,15 +204,14 @@ export default function Brochure() {
                 <QuickIcon d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8zM19 8v6M22 11h-6" />
                 Save contact
               </button>
-              <a
-                href={BROCHURE.businessCardUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => printDocument(BROCHURE.businessCardUrl)}
                 className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-cream shadow-brand transition hover:bg-brand/90"
               >
                 <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
                 Download card as PDF
-              </a>
+              </button>
             </div>
 
             {/* quick actions */}
@@ -205,8 +229,8 @@ export default function Brochure() {
 
 function CardLine({ label, value }: { label: string; value: string }) {
   return (
-    <p className="flex items-baseline gap-2 text-[11px] leading-tight text-charcoal/80">
-      <span className="min-w-[58px] font-semibold text-brand">{label}</span>
+    <p className="flex items-baseline gap-2 text-[10px] leading-tight text-[#2d2d2d]/90">
+      <span className="min-w-[54px] text-[8px] font-semibold uppercase tracking-wider text-[#2e1447]">{label}</span>
       <span className="font-medium">{value}</span>
     </p>
   )
@@ -228,106 +252,120 @@ function QuickAction({ href, label, d }: { href: string; label: string; d: strin
 /* ---------- The long inline brochure document ---------- */
 function BrochureDocument() {
   return (
-    <article className="bg-white text-charcoal">
-      {/* cover */}
-      <div className="relative h-60">
-        <img src={MEDIA.dayExterior} alt="Luna Cottage exterior" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand/90 via-brand/40 to-charcoal/20" />
-        <div className="absolute inset-0 flex flex-col justify-between p-6 text-cream">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/15 font-serif text-xl font-bold">
-              L
-            </span>
-            <div>
-              <p className="font-serif text-lg font-bold leading-none">Luna Cottage</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-cream/85">Adult Family Home</p>
+    <article className="relative bg-[#faf7f2] p-4 text-[#2d2d2d] md:p-6">
+      {/* Decorative double border simulating print brochure */}
+      <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/40 rounded-2xl" />
+      <div className="absolute inset-3 pointer-events-none border border-[#c5a880]/20 rounded-2xl" />
+
+      <div className="relative z-10 space-y-6">
+        {/* cover */}
+        <div className="relative h-64 overflow-hidden rounded-xl border border-[#c5a880]/30">
+          <img src={MEDIA.dayExterior} alt="Luna Cottage exterior" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2e1447]/95 via-[#2e1447]/60 to-[#2e1447]/20" />
+          <div className="absolute inset-0 flex flex-col justify-between p-5 text-[#faf7f2]">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c5a880] bg-white/10 font-serif text-lg font-bold text-[#c5a880]">
+                L
+              </span>
+              <div>
+                <p className="font-serif text-lg font-bold leading-none">Luna Cottage</p>
+                <p className="mt-1 text-[8px] uppercase tracking-[0.2em] text-[#c5a880] font-semibold">Adult Family Home</p>
+              </div>
             </div>
-          </div>
-          <div>
-            <p className="font-serif text-3xl font-bold leading-tight">Where care feels like home.</p>
-            <p className="mt-2 max-w-md text-sm text-cream/90">
-              A licensed, RN-owned adult family home in a peaceful South Everett neighborhood.
-            </p>
+            <div>
+              <p className="font-serif text-2xl font-semibold italic leading-tight text-[#faf7f2]">Where care feels like home.</p>
+              <p className="mt-2 max-w-md text-xs text-[#faf7f2]/85 font-light border-l border-[#c5a880] pl-2">
+                A licensed, RN-owned adult family home in a peaceful South Everett neighborhood.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* contact strip */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 bg-charcoal px-6 py-3 text-[11px] text-cream/85">
-        <span><span className="text-glow">Owner:</span> {SITE.owner}</span>
-        <span><span className="text-glow">Call/Text:</span> {primaryPhone.number}</span>
-        {officePhone && <span><span className="text-glow">Office:</span> {officePhone.number}</span>}
-      </div>
+        {/* contact strip */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 rounded-lg bg-[#2e1447] border border-[#c5a880]/50 px-4 py-2.5 text-[11px] text-[#faf7f2]">
+          <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Owner:</span>{SITE.owner}</span>
+          <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Call/Text:</span>{primaryPhone.number}</span>
+          {officePhone && <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Office:</span>{officePhone.number}</span>}
+        </div>
 
-      <div className="space-y-8 p-6 md:p-8">
-        <section>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Welcome</p>
-          <h3 className="mt-1 font-serif text-2xl font-bold">A home built on compassion</h3>
-          {ABOUT_PARAGRAPHS.map((p, i) => (
-            <p key={i} className="mt-3 text-[13px] leading-relaxed text-charcoal/75">{p}</p>
-          ))}
-        </section>
-
-        <blockquote className="rounded-xl border-l-4 border-brand bg-gradient-to-r from-brand/8 to-magenta/5 p-5 font-serif text-base italic leading-relaxed text-charcoal/85">
-          “{MISSION}”
-        </blockquote>
-
-        <section>
-          <h4 className="font-serif text-lg font-semibold text-brand">Our philosophy of care</h4>
-          <p className="mt-2 text-[13px] leading-relaxed text-charcoal/75">{PHILOSOPHY}</p>
-        </section>
-
-        <section>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Services &amp; care</p>
-          <h3 className="mt-1 font-serif text-2xl font-bold">What we provide</h3>
-          <div className="mt-4 space-y-6">
-            {SERVICE_CATEGORIES.map((cat) => (
-              <div key={cat.title}>
-                <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/10 text-sm text-brand">
-                    {cat.icon}
-                  </span>
-                  <h4 className="font-serif text-base font-semibold">{cat.title}</h4>
-                </div>
-                <ul className="mt-2 grid grid-cols-1 gap-x-5 gap-y-1.5 sm:grid-cols-2">
-                  {cat.items.map((item) => (
-                    <li key={item} className="flex gap-2 text-[12px] leading-snug text-charcoal/75">
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-brand" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        <div className="space-y-6 px-1">
+          <section>
+            <p className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.25em] text-[#c5a880]">
+              Welcome <span className="h-[1px] w-8 bg-[#c5a880]" />
+            </p>
+            <h3 className="mt-1.5 font-serif text-xl font-bold text-[#2e1447]">A home built on compassion</h3>
+            {ABOUT_PARAGRAPHS.map((p, i) => (
+              <p key={i} className="mt-2.5 text-xs leading-relaxed text-[#2d2d2d]/85">{p}</p>
             ))}
-          </div>
-        </section>
+          </section>
 
-        <section className="rounded-2xl bg-gradient-to-br from-brand to-magenta p-6 text-cream">
-          <h3 className="font-serif text-xl font-bold">Schedule a visit</h3>
-          <p className="mt-1 text-sm text-cream/90">
-            We would welcome the opportunity to earn your trust and show you the best care in the industry.
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-[12px]">
-            <div>
-              <p className="text-[9px] uppercase tracking-wider text-cream/70">Call or Text</p>
-              <p className="font-semibold">{primaryPhone.number}</p>
+          <blockquote className="relative rounded-r-xl border-l-3 border-[#c5a880] bg-[#c5a880]/8 p-4">
+            <span className="absolute left-2 top-0 font-serif text-4xl text-[#c5a880]/30 select-none">“</span>
+            <p className="relative z-10 pl-2 font-serif text-sm italic leading-relaxed text-[#2e1447]">
+              {MISSION}
+            </p>
+          </blockquote>
+
+          <section>
+            <h4 className="font-serif text-sm font-semibold italic text-[#58217a]">Our philosophy of care</h4>
+            <p className="mt-1 text-xs leading-relaxed text-[#2d2d2d]/85">{PHILOSOPHY}</p>
+          </section>
+
+          <section>
+            <p className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.25em] text-[#c5a880]">
+              Services &amp; care <span className="h-[1px] w-8 bg-[#c5a880]" />
+            </p>
+            <h3 className="mt-1.5 font-serif text-xl font-bold text-[#2e1447]">What we provide</h3>
+            <div className="mt-4 space-y-5">
+              {SERVICE_CATEGORIES.map((cat) => (
+                <div key={cat.title} className="border-t border-[#c5a880]/15 pt-3 first:border-0 first:pt-0">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#2e1447]/10 text-xs text-[#2e1447]">
+                      {cat.icon}
+                    </span>
+                    <h4 className="font-serif text-sm font-semibold text-[#2e1447]">{cat.title}</h4>
+                  </div>
+                  <ul className="mt-2 grid grid-cols-1 gap-x-4 gap-y-1.5 sm:grid-cols-2">
+                    {cat.items.map((item) => (
+                      <li key={item} className="relative pl-3.5 text-[11px] leading-snug text-[#2d2d2d]/80">
+                        <span className="absolute left-0 top-1.5 text-[6px] text-[#c5a880]">◆</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-            {officePhone && (
+          </section>
+
+          <section className="relative overflow-hidden rounded-xl bg-[#2e1447] border border-[#c5a880]/70 p-5 text-[#faf7f2]">
+            <div className="absolute inset-1 pointer-events-none border border-[#c5a880]/30 rounded-lg" />
+            <h3 className="font-serif text-lg font-bold text-[#c5a880] text-center">Schedule a visit</h3>
+            <p className="mt-1 text-center text-[11px] font-light text-[#faf7f2]/85">
+              We would welcome the opportunity to earn your trust and show you the best care in the industry.
+            </p>
+            <div className="relative z-10 mt-4 grid grid-cols-2 gap-3 text-[11px]">
               <div>
-                <p className="text-[9px] uppercase tracking-wider text-cream/70">Office</p>
-                <p className="font-semibold">{officePhone.number}</p>
+                <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Call or Text</p>
+                <p className="font-medium">{primaryPhone.number}</p>
               </div>
-            )}
-            <div>
-              <p className="text-[9px] uppercase tracking-wider text-cream/70">Email</p>
-              <p className="font-semibold break-all">{SITE.email}</p>
+              {officePhone && (
+                <div>
+                  <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Office</p>
+                  <p className="font-medium">{officePhone.number}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Email</p>
+                <p className="font-medium break-all">{SITE.email}</p>
+              </div>
+              <div>
+                <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Address</p>
+                <p className="font-medium">10524 23rd Dr SE, Everett, WA 98208</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[9px] uppercase tracking-wider text-cream/70">Address</p>
-              <p className="font-semibold">10524 23rd Dr SE, Everett, WA 98208</p>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </article>
   )

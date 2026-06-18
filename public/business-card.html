@@ -7,194 +7,391 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --brand: #7b2d9e;
-        --magenta: #d10056;
-        --cream: #faf6ee;
+        --brand-deep: #2e1447; /* Luxury Royal Purple */
+        --brand-main: #58217a;
+        --accent-gold: #c5a880; /* Elegant Warm Gold */
+        --accent-gold-dark: #a8885c;
+        --cream-bg: #faf7f2; /* Cream/Ivory */
         --charcoal: #2d2d2d;
-        --glow: #ffb84d;
-        --lavender: #c8a8e9;
+        --white: #ffffff;
       }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+      }
+
       body {
-        font-family: 'Inter', system-ui, sans-serif;
-        background: #ece6dc;
+        font-family: 'Outfit', system-ui, sans-serif;
+        background: #e2dbd0;
         color: var(--charcoal);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 28px;
-        padding: 40px 16px 64px;
+        gap: 32px;
+        padding: 40px 16px 80px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
+      /* Toolbar styles */
       .toolbar {
         position: sticky;
-        top: 0;
-        z-index: 10;
+        top: 16px;
+        z-index: 50;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: center;
-        gap: 12px;
+        justify-content: space-between;
+        gap: 16px;
         width: 100%;
         max-width: 760px;
-        padding: 14px 18px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(123, 45, 158, 0.15);
-        border-radius: 16px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 10px 30px -12px rgba(45, 45, 45, 0.2);
+        padding: 14px 24px;
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(197, 168, 128, 0.3);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 16px 40px -15px rgba(45, 45, 45, 0.15);
       }
-      .toolbar p { font-size: 13px; color: #5a5a5a; }
+      
+      .toolbar-text {
+        font-size: 13.5px;
+        color: #555555;
+      }
+      
+      .toolbar-text strong {
+        color: var(--brand-deep);
+        font-weight: 600;
+      }
+
       .btn {
         appearance: none;
         border: none;
         cursor: pointer;
-        font: inherit;
+        font-family: 'Outfit', sans-serif;
         font-weight: 600;
         font-size: 14px;
-        color: var(--cream);
-        background: var(--brand);
-        padding: 11px 22px;
+        color: var(--cream-bg);
+        background: var(--brand-deep);
+        padding: 12px 28px;
         border-radius: 999px;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(46, 20, 71, 0.2);
       }
-      .btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(123, 45, 158, 0.4); }
+      
+      .btn:hover {
+        transform: translateY(-2px);
+        background: var(--brand-main);
+        box-shadow: 0 8px 20px rgba(46, 20, 71, 0.35);
+      }
+      
+      .btn svg {
+        transition: transform 0.25s ease;
+      }
+      
+      .btn:hover svg {
+        transform: translateY(2px);
+      }
 
-      .cards { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+      .cards { 
+        display: flex; 
+        flex-direction: column;
+        gap: 32px; 
+        justify-content: center; 
+        align-items: center;
+      }
 
+      /* Card dimensions: standard 3.5in x 2in */
       .card {
         width: 3.5in;
         height: 2in;
-        border-radius: 14px;
+        border-radius: 12px;
         overflow: hidden;
         position: relative;
-        box-shadow: 0 18px 40px -16px rgba(45, 45, 45, 0.45);
+        box-shadow: 0 20px 50px -15px rgba(45, 45, 45, 0.35);
+        display: flex;
+        flex-direction: column;
+        padding: 0.18in;
       }
 
-      /* ---------- FRONT ---------- */
-      .front {
-        background: linear-gradient(135deg, var(--brand) 0%, var(--magenta) 100%);
-        color: var(--cream);
-        padding: 0.26in 0.3in;
+      /* Inset borders for the cards */
+      .card-border {
+        position: absolute;
+        inset: 8px;
+        border: 1px solid var(--accent-gold);
+        opacity: 0.65;
+        pointer-events: none;
+        z-index: 10;
+        border-radius: 8px;
+      }
+
+      .card-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 5;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
       }
-      .front::after {
+
+      /* ---------- FRONT CARD (Deep Royal Purple) ---------- */
+      .front {
+        background: var(--brand-deep);
+        color: var(--cream-bg);
+      }
+      
+      /* Artistic background light glow on front */
+      .front::before {
         content: '';
         position: absolute;
-        right: -40px;
-        top: -40px;
-        width: 150px;
-        height: 150px;
-        background: rgba(255, 184, 77, 0.22);
-        border-radius: 50%;
-        filter: blur(6px);
+        top: -50px;
+        right: -50px;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(197, 168, 128, 0.25) 0%, transparent 70%);
+        pointer-events: none;
       }
-      .brand-row { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+
+      .brand-row { 
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
+      }
+      
       .logo {
-        width: 38px;
-        height: 38px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.16);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1.2px solid var(--accent-gold);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
         font-size: 20px;
+        color: var(--accent-gold);
       }
-      .brand-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 19px; line-height: 1.1; }
-      .brand-sub { font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
-      .front-owner { position: relative; z-index: 1; }
-      .front-owner .name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
-      .front-owner .role { font-size: 10px; letter-spacing: 0.06em; opacity: 0.85; margin-top: 2px; }
-      .front-tag { position: relative; z-index: 1; font-size: 9.5px; font-style: italic; opacity: 0.85; }
+      
+      .brand-name { 
+        font-family: 'Cormorant Garamond', serif; 
+        font-weight: 700; 
+        font-size: 20px; 
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      
+      .brand-sub { 
+        font-size: 8px; 
+        letter-spacing: 0.2em; 
+        text-transform: uppercase; 
+        color: var(--accent-gold);
+        margin-top: 3px;
+        font-weight: 500;
+      }
 
-      /* ---------- BACK ---------- */
-      .back {
-        background: var(--cream);
-        padding: 0.24in 0.3in;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 6px;
-        border: 1px solid rgba(123, 45, 158, 0.12);
+      .front-owner {
+        margin-bottom: 2px;
       }
+      
+      .front-owner .name { 
+        font-family: 'Cormorant Garamond', serif; 
+        font-size: 17px; 
+        font-weight: 600; 
+        color: var(--white);
+        line-height: 1.1;
+      }
+      
+      .front-owner .role { 
+        font-size: 9px; 
+        letter-spacing: 0.08em; 
+        color: var(--accent-gold);
+        margin-top: 2px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      
+      .front-tag { 
+        font-size: 9.5px; 
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic; 
+        color: var(--cream-bg);
+        opacity: 0.85; 
+      }
+
+      /* ---------- BACK CARD (Cream/Ivory) ---------- */
+      .back {
+        background: var(--cream-bg);
+        color: var(--charcoal);
+        border: 1px solid rgba(197, 168, 128, 0.25);
+      }
+
       .back .heading {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Cormorant Garamond', serif;
         font-size: 13px;
         font-weight: 700;
-        color: var(--brand);
-        margin-bottom: 4px;
+        color: var(--brand-deep);
+        margin-bottom: 6px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        border-bottom: 1.2px solid rgba(197, 168, 128, 0.25);
+        padding-bottom: 3px;
       }
-      .line { display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: #3a3a3a; }
-      .line .lbl { color: var(--brand); font-weight: 600; min-width: 64px; }
-      .line .val { font-weight: 500; }
+
+      .lines-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4.5px;
+        margin-top: 2px;
+      }
+
+      .line { 
+        display: flex; 
+        align-items: baseline; 
+        gap: 6px; 
+        font-size: 10px; 
+        line-height: 1.2;
+      }
+      
+      .line .lbl { 
+        color: var(--brand-deep); 
+        font-weight: 600; 
+        min-width: 54px;
+        text-transform: uppercase;
+        font-size: 8px;
+        letter-spacing: 0.05em;
+      }
+      
+      .line .val { 
+        font-weight: 400; 
+        color: var(--charcoal);
+      }
+      
       .pill {
-        margin-top: 6px;
         align-self: flex-start;
-        font-size: 8.5px;
+        font-size: 8px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        color: var(--brand);
-        background: rgba(123, 45, 158, 0.1);
-        padding: 4px 10px;
-        border-radius: 999px;
+        color: var(--brand-deep);
+        background: rgba(88, 33, 122, 0.08);
+        border: 1px solid rgba(88, 33, 122, 0.15);
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-top: 4px;
       }
 
-      .caption { font-size: 12px; color: #6a6a6a; letter-spacing: 0.04em; }
+      .caption {
+        font-size: 11px;
+        color: #7c7569;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 10px;
+        margin-bottom: -16px;
+      }
 
       @media print {
-        @page { size: 3.5in 2in; margin: 0; }
-        body { background: #fff; padding: 0; gap: 0; display: block; }
-        .toolbar, .caption { display: none !important; }
-        .cards { display: block; gap: 0; }
-        .card { box-shadow: none; border-radius: 0; page-break-after: always; }
-        .card:last-child { page-break-after: auto; }
+        @page { 
+          size: 3.5in 2in; 
+          margin: 0; 
+        }
+        body { 
+          background: #fff; 
+          padding: 0; 
+          gap: 0; 
+          display: block; 
+        }
+        .toolbar, .caption { 
+          display: none !important; 
+        }
+        .cards { 
+          display: block; 
+          gap: 0; 
+        }
+        .card { 
+          box-shadow: none; 
+          border-radius: 0; 
+          page-break-after: always; 
+        }
+        .card:last-child { 
+          page-break-after: auto; 
+        }
       }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <p>Two cards below: front &amp; back. Use “Save as PDF” (or print on card stock).</p>
-      <button class="btn" onclick="window.print()">⬇ Save as PDF</button>
+      <div class="toolbar-text">
+        Ready to print or save. Set destination printer to <strong>Save as PDF</strong> and paper size to <strong>3.5" x 2"</strong> (or print on US Letter card stock).
+      </div>
+      <button class="btn" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Save as PDF
+      </button>
     </div>
 
-    <p class="caption">FRONT</p>
+    <p class="caption">Front Side</p>
     <div class="cards">
       <div class="card front">
-        <div class="brand-row">
-          <div class="logo">L</div>
-          <div>
-            <div class="brand-name">Luna Cottage</div>
-            <div class="brand-sub">Adult Family Home</div>
+        <div class="card-border"></div>
+        <div class="card-content">
+          <div class="brand-row">
+            <div class="logo">L</div>
+            <div>
+              <div class="brand-name">Luna Cottage</div>
+              <div class="brand-sub">Adult Family Home</div>
+            </div>
           </div>
+          <div class="front-owner">
+            <div class="name">Fitsum Awoke, RN, BSN</div>
+            <div class="role">Owner &amp; Registered Nurse</div>
+          </div>
+          <div class="front-tag">Where care feels like home.</div>
         </div>
-        <div class="front-owner">
-          <div class="name">Fitsum Awoke, RN, BSN</div>
-          <div class="role">Owner &amp; Registered Nurse</div>
-        </div>
-        <div class="front-tag">Where care feels like home.</div>
       </div>
     </div>
 
-    <p class="caption">BACK</p>
+    <p class="caption">Back Side</p>
     <div class="cards">
       <div class="card back">
-        <div class="heading">Get in touch</div>
-        <div class="line"><span class="lbl">Call / Text</span><span class="val">206-398-9638</span></div>
-        <div class="line"><span class="lbl">Office</span><span class="val">425-337-9724</span></div>
-        <div class="line"><span class="lbl">Email</span><span class="val">Emunetluna@gmail.com</span></div>
-        <div class="line"><span class="lbl">Address</span><span class="val">10524 23rd Dr SE, Everett, WA 98208</span></div>
-        <span class="pill">Private pay &amp; Medicaid accepted</span>
+        <div class="card-border"></div>
+        <div class="card-content">
+          <div class="heading">Get in touch</div>
+          <div class="lines-container">
+            <div class="line">
+              <span class="lbl">Call / Text</span>
+              <span class="val">206-398-9638</span>
+            </div>
+            <div class="line">
+              <span class="lbl">Office</span>
+              <span class="val">425-337-9724</span>
+            </div>
+            <div class="line">
+              <span class="lbl">Email</span>
+              <span class="val">Emunetluna@gmail.com</span>
+            </div>
+            <div class="line">
+              <span class="lbl">Address</span>
+              <span class="val">10524 23rd Dr SE, Everett, WA 98208</span>
+            </div>
+          </div>
+          <span class="pill">Private pay &amp; Medicaid accepted</span>
+        </div>
       </div>
     </div>
   </body>
