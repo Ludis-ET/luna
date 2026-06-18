@@ -83,6 +83,8 @@ export default function Navbar() {
             className="rounded-lg p-2.5 text-charcoal/70 transition hover:bg-white/60 lg:hidden"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             <span className={`block h-0.5 w-5 rounded bg-charcoal transition ${menuOpen ? 'translate-y-1.5 rotate-45' : ''}`} />
             <span className={`my-1 block h-0.5 w-5 rounded bg-charcoal transition ${menuOpen ? 'opacity-0' : ''}`} />
@@ -102,6 +104,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
             />
             <motion.nav
+              id="mobile-menu"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}

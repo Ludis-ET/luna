@@ -34,8 +34,12 @@ export default function Footer() {
           <p className="mb-4 text-xs font-bold uppercase tracking-widest text-glow">Contact</p>
           <p className="text-sm">{SITE.address}</p>
           {SITE.phones.map((p) => (
-            <a key={p} href={`tel:${p.replace(/-/g, '')}`} className="mt-2 block text-sm hover:text-glow">
-              {p}
+            <a
+              key={p.number}
+              href={`tel:${p.number.replace(/-/g, '')}`}
+              className="mt-2 block text-sm hover:text-glow"
+            >
+              {p.label}: {p.number}
             </a>
           ))}
           <a href={`mailto:${SITE.email}`} className="mt-2 block text-sm hover:text-glow">

@@ -59,7 +59,7 @@ export default function Mission() {
       >
         &ldquo;{MISSION}&rdquo;
         <footer className="mt-8 font-sans text-sm font-semibold not-italic tracking-[0.2em] text-cream/60">
-          — LUNA COTTAGE AFH MISSION
+          LUNA COTTAGE AFH MISSION
         </footer>
       </blockquote>
     </section>

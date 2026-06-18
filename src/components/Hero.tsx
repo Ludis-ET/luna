@@ -14,7 +14,7 @@ export default function Hero() {
       id="hero"
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-cream"
     >
-      {/* Background image — clean, no video or 3D */}
+      {/* Background image: clean, no video or 3D */}
       <div className="absolute inset-0">
         <img
           src={MEDIA.dayExterior}
@@ -45,7 +45,7 @@ export default function Hero() {
           {...fadeUp(0.3)}
           className="mt-5 max-w-xl text-base leading-relaxed text-charcoal/65 md:text-lg"
         >
-          A six-bedroom residence run by a Registered Nurse — compassionate,
+          A six-bedroom residence run by a Registered Nurse, offering compassionate,
           individualized elder care in a quiet neighborhood.
         </motion.p>
 
@@ -67,7 +67,7 @@ export default function Hero() {
           </a>
         </motion.div>
 
-        {/* Trust row — visible immediately, no scroll trap */}
+        {/* Trust row: visible immediately, no scroll trap */}
         <motion.div
           {...fadeUp(0.6)}
           className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-charcoal/10 pt-8"

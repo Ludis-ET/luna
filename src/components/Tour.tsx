@@ -64,7 +64,7 @@ export default function Tour() {
 
       <div ref={headerRef} className="container-max mb-10 px-6 text-center md:mb-14">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <SectionLabel number="06" label="Virtual Tour" />
+          <SectionLabel number="05" label="Virtual Tour" />
         </motion.div>
         <h2 className="font-serif text-3xl font-semibold text-charcoal md:text-5xl">
           Take a <span className="text-brand">virtual tour</span>
@@ -79,7 +79,7 @@ export default function Tour() {
           <VideoPlayer
             src={MEDIA.video}
             poster={MEDIA.nightWide}
-            title="Luna Cottage — Full property walkthrough"
+            title="Luna Cottage: Full property walkthrough"
             className="rounded-2xl md:rounded-3xl"
           />
         </div>

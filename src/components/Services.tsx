@@ -58,7 +58,7 @@ export default function Services() {
   return (
     <section id="services" ref={sectionRef} className="section-pad bg-cream">
       <div className="container-max px-6">
-        <SectionLabel number="03" label="Services" />
+        <SectionLabel number="02" label="Services" />
         <h2 className="font-serif text-3xl font-bold text-charcoal md:text-5xl">
           Here&apos;s <span className="text-brand">what we do</span>
         </h2>
@@ -98,7 +98,7 @@ export default function Services() {
           className="mt-12 rounded-2xl border border-lavender/50 bg-lavender/20 p-8 text-center"
         >
           <p className="font-serif text-lg italic text-charcoal/90">
-            Each resident receives a customized care plan — developed around their interests,
+            Each resident receives a customized care plan, developed around their interests,
             preferences, and capabilities, then reviewed regularly and updated whenever needs change.
           </p>
         </motion.div>

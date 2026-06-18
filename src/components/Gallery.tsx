@@ -49,8 +49,14 @@ export default function Gallery() {
     <section id="gallery" ref={sectionRef} className="relative bg-charcoal">
       <div ref={pinRef} className="flex h-screen flex-col justify-center overflow-hidden py-24">
         <div className="container-max mb-8 px-6">
-          <SectionLabel number="05" label="Gallery" light />
-          <h2 className="font-serif text-3xl font-bold text-cream md:text-5xl">See the Home</h2>
+          <SectionLabel number="03" label="Gallery" light />
+          <h2 className="font-serif text-3xl font-bold text-cream md:text-5xl">
+            Experience the Home
+          </h2>
+          <p className="mt-3 max-w-2xl text-cream/65">
+            Scroll through a day at Luna Cottage, from a warm welcome at the door to safe,
+            serene evenings.
+          </p>
 
           <div className="mt-6 flex flex-wrap gap-2">
             {FILTERS.map((f) => (
@@ -80,10 +86,11 @@ export default function Gallery() {
               className="group relative h-[55vh] w-[80vw] max-w-md shrink-0 overflow-hidden rounded-3xl ring-2 ring-transparent transition hover:ring-glow/50 md:w-[45vw]"
             >
               <img src={img.src} alt={img.alt} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-              <span className="absolute bottom-4 left-4 text-sm font-medium text-cream opacity-0 transition group-hover:opacity-100">
-                {img.alt}
-              </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-left">
+                <p className="font-serif text-xl font-semibold text-cream md:text-2xl">{img.title}</p>
+                <p className="mt-1 text-sm text-cream/75">{img.caption}</p>
+              </div>
             </motion.button>
           ))}
         </div>

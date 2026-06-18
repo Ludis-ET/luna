@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luna Cottage AFH Business Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --brand: #7b2d9e;
+        --magenta: #d10056;
+        --cream: #faf6ee;
+        --charcoal: #2d2d2d;
+        --glow: #ffb84d;
+        --lavender: #c8a8e9;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: #ece6dc;
+        color: var(--charcoal);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        padding: 40px 16px 64px;
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 760px;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(123, 45, 158, 0.15);
+        border-radius: 16px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 10px 30px -12px rgba(45, 45, 45, 0.2);
+      }
+      .toolbar p { font-size: 13px; color: #5a5a5a; }
+      .btn {
+        appearance: none;
+        border: none;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--cream);
+        background: var(--brand);
+        padding: 11px 22px;
+        border-radius: 999px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(123, 45, 158, 0.4); }
+
+      .cards { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+
+      .card {
+        width: 3.5in;
+        height: 2in;
+        border-radius: 14px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 18px 40px -16px rgba(45, 45, 45, 0.45);
+      }
+
+      /* ---------- FRONT ---------- */
+      .front {
+        background: linear-gradient(135deg, var(--brand) 0%, var(--magenta) 100%);
+        color: var(--cream);
+        padding: 0.26in 0.3in;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .front::after {
+        content: '';
+        position: absolute;
+        right: -40px;
+        top: -40px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 184, 77, 0.22);
+        border-radius: 50%;
+        filter: blur(6px);
+      }
+      .brand-row { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+      .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 20px;
+      }
+      .brand-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 19px; line-height: 1.1; }
+      .brand-sub { font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
+      .front-owner { position: relative; z-index: 1; }
+      .front-owner .name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
+      .front-owner .role { font-size: 10px; letter-spacing: 0.06em; opacity: 0.85; margin-top: 2px; }
+      .front-tag { position: relative; z-index: 1; font-size: 9.5px; font-style: italic; opacity: 0.85; }
+
+      /* ---------- BACK ---------- */
+      .back {
+        background: var(--cream);
+        padding: 0.24in 0.3in;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid rgba(123, 45, 158, 0.12);
+      }
+      .back .heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--brand);
+        margin-bottom: 4px;
+      }
+      .line { display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: #3a3a3a; }
+      .line .lbl { color: var(--brand); font-weight: 600; min-width: 64px; }
+      .line .val { font-weight: 500; }
+      .pill {
+        margin-top: 6px;
+        align-self: flex-start;
+        font-size: 8.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--brand);
+        background: rgba(123, 45, 158, 0.1);
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+
+      .caption { font-size: 12px; color: #6a6a6a; letter-spacing: 0.04em; }
+
+      @media print {
+        @page { size: 3.5in 2in; margin: 0; }
+        body { background: #fff; padding: 0; gap: 0; display: block; }
+        .toolbar, .caption { display: none !important; }
+        .cards { display: block; gap: 0; }
+        .card { box-shadow: none; border-radius: 0; page-break-after: always; }
+        .card:last-child { page-break-after: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <p>Two cards below: front &amp; back. Use “Save as PDF” (or print on card stock).</p>
+      <button class="btn" onclick="window.print()">⬇ Save as PDF</button>
+    </div>
+
+    <p class="caption">FRONT</p>
+    <div class="cards">
+      <div class="card front">
+        <div class="brand-row">
+          <div class="logo">L</div>
+          <div>
+            <div class="brand-name">Luna Cottage</div>
+            <div class="brand-sub">Adult Family Home</div>
+          </div>
+        </div>
+        <div class="front-owner">
+          <div class="name">Fitsum Awoke, RN, BSN</div>
+          <div class="role">Owner &amp; Registered Nurse</div>
+        </div>
+        <div class="front-tag">Where care feels like home.</div>
+      </div>
+    </div>
+
+    <p class="caption">BACK</p>
+    <div class="cards">
+      <div class="card back">
+        <div class="heading">Get in touch</div>
+        <div class="line"><span class="lbl">Call / Text</span><span class="val">206-398-9638</span></div>
+        <div class="line"><span class="lbl">Office</span><span class="val">425-337-9724</span></div>
+        <div class="line"><span class="lbl">Email</span><span class="val">Emunetluna@gmail.com</span></div>
+        <div class="line"><span class="lbl">Address</span><span class="val">10524 23rd Dr SE, Everett, WA 98208</span></div>
+        <span class="pill">Private pay &amp; Medicaid accepted</span>
+      </div>
+    </div>
+  </body>
+</html>
