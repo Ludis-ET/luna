@@ -21,8 +21,8 @@ export default function App() {
           <Services />
           <Mission />
           <Gallery />
-          <Brochure />
           <Tour />
+          <Brochure />
           <Contact />
         </main>
         <Footer />

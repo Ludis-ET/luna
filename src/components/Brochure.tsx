@@ -1,96 +1,334 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
-import { BROCHURE, SITE } from '../data/content'
+import {
+  SITE,
+  BROCHURE,
+  ABOUT_PARAGRAPHS,
+  PHILOSOPHY,
+  MISSION,
+  SERVICE_CATEGORIES,
+} from '../data/content'
+import { MEDIA } from '../data/media'
 
-const DownloadIcon = () => (
-  <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+const primaryPhone = SITE.phones.find((p) => p.primary) ?? SITE.phones[0]
+const officePhone = SITE.phones.find((p) => !p.primary)
+const telHref = (n: string) => `tel:${n.replace(/[^\d+]/g, '')}`
+const smsHref = (n: string) => `sms:${n.replace(/[^\d+]/g, '')}`
+
+function downloadVCard() {
+  const lines = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'N:Awoke;Fitsum;;;RN, BSN',
+    'FN:Fitsum Awoke, RN, BSN',
+    'ORG:Luna Cottage Adult Family Home',
+    'TITLE:Owner & Registered Nurse',
+    `TEL;TYPE=CELL,VOICE:${primaryPhone.number}`,
+    officePhone ? `TEL;TYPE=WORK,VOICE:${officePhone.number}` : '',
+    `EMAIL;TYPE=INTERNET:${SITE.email}`,
+    'ADR;TYPE=WORK:;;10524 23rd Dr SE;Everett;WA;98208;USA',
+    `URL:https://${SITE.website}`,
+    'END:VCARD',
+  ].filter(Boolean)
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'Luna-Cottage-Fitsum-Awoke.vcf'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+const QuickIcon = ({ d }: { d: string }) => (
+  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d={d} />
   </svg>
 )
 
-const items = [
-  {
-    href: BROCHURE.brochureUrl,
-    badge: 'PDF · Letter size',
-    title: 'Care & Services Brochure',
-    description:
-      'A complete, print-ready overview of Luna Cottage, perfect to share with family, case managers, and social workers.',
-    features: [
-      'Welcome, mission & philosophy of care',
-      'Full services, specialties & amenities',
-      'Contact details and how to schedule a tour',
-    ],
-    cta: 'Open & Save as PDF',
-    accent: 'from-brand to-magenta',
-  },
-  {
-    href: BROCHURE.businessCardUrl,
-    badge: 'PDF · 3.5 × 2 in',
-    title: 'Business Card',
-    description:
-      `A polished, double-sided business card for ${SITE.owner}, ready to print or hand off digitally.`,
-    features: ['Front & back design', 'Direct call/text and office numbers', 'Email, address & website'],
-    cta: 'Open & Save as PDF',
-    accent: 'from-charcoal to-brand',
-  },
-]
-
 export default function Brochure() {
+  const [flipped, setFlipped] = useState(false)
+
   return (
-    <section id="brochure" className="section-pad bg-gradient-to-b from-cream to-lavender/20">
+    <section id="brochure" className="section-pad bg-gradient-to-b from-cream via-cream to-lavender/20">
       <div className="container-max px-6">
         <SectionLabel number="04" label="Resources" />
         <h2 className="font-serif text-3xl font-bold text-charcoal md:text-5xl">
-          Download our <span className="text-brand">brochure</span>
+          Take Luna Cottage <span className="text-brand">with you</span>
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-charcoal/70 md:text-lg">
-          Take Luna Cottage with you. Open either file and choose “Save as PDF” to download or print.
+          Browse our full brochure below, and save our card to your phone in a tap. Everything is
+          ready to download, print, or share.
         </p>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {items.map((item, i) => (
-            <motion.a
-              key={item.title}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group glass-card flex flex-col rounded-3xl p-8 transition hover:-translate-y-1 hover:shadow-glow"
-            >
-              <div className="flex items-center justify-between">
-                <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.accent} text-cream shadow-lg`}
-                >
-                  <DownloadIcon />
+        <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:items-start">
+          {/* ============ BROCHURE: long, inline, scrollable document ============ */}
+          <motion.div
+            initial={{ opacity: 0, y: 36 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="lg:col-span-3"
+          >
+            <div className="overflow-hidden rounded-3xl border border-brand/10 bg-white shadow-[0_30px_80px_-30px_rgba(123,45,158,0.4)]">
+              {/* document chrome */}
+              <div className="flex items-center justify-between gap-3 border-b border-charcoal/10 bg-cream/80 px-5 py-3 backdrop-blur">
+                <div className="flex items-center gap-2 text-xs font-semibold text-charcoal/70">
+                  <span className="h-2.5 w-2.5 rounded-full bg-magenta/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-glow/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-brand/60" />
+                  <span className="ml-2 hidden sm:inline">Luna-Cottage-Brochure.pdf</span>
                 </div>
-                <span className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand">
-                  {item.badge}
-                </span>
+                <a
+                  href={BROCHURE.brochureUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-cream transition hover:bg-brand/90"
+                >
+                  <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                  Download PDF
+                </a>
               </div>
 
-              <h3 className="mt-6 font-serif text-2xl font-bold text-charcoal">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-charcoal/70">{item.description}</p>
+              {/* the long page (data-lenis-prevent lets it scroll natively inside smooth-scroll) */}
+              <div data-lenis-prevent className="h-[560px] overflow-y-auto md:h-[72vh]">
+                <BrochureDocument />
+              </div>
+            </div>
+          </motion.div>
 
-              <ul className="mt-5 space-y-2">
-                {item.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm text-charcoal/75">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+          {/* ============ BUSINESS CARD: flippable + downloadable ============ */}
+          <motion.div
+            initial={{ opacity: 0, y: 36 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
+            className="lg:col-span-2 lg:sticky lg:top-28"
+          >
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-charcoal/45">
+              Tap the card to flip
+            </p>
 
-              <span className="btn-primary mt-7 w-full justify-center group-hover:scale-[1.02]">
-                <DownloadIcon />
-                {item.cta}
-              </span>
-            </motion.a>
-          ))}
+            {/* flip stage */}
+            <div className="perspective-1200">
+              <button
+                type="button"
+                onClick={() => setFlipped((v) => !v)}
+                aria-label="Flip business card"
+                className="relative block aspect-[7/4] w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              >
+                <div
+                  className={`transform-style-3d relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                    flipped ? 'rotate-y-180' : ''
+                  }`}
+                >
+                  {/* FRONT */}
+                  <div className="backface-hidden absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-magenta p-6 text-cream shadow-[0_24px_60px_-20px_rgba(123,45,158,0.6)]">
+                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-10" aria-hidden />
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-glow/20 blur-2xl" />
+                    <div className="relative flex items-center gap-3">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/15 font-serif text-xl font-bold">
+                        L
+                      </span>
+                      <div>
+                        <p className="font-serif text-lg font-bold leading-none">Luna Cottage</p>
+                        <p className="mt-1 text-[9px] uppercase tracking-[0.2em] text-cream/80">
+                          Adult Family Home
+                        </p>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <p className="font-serif text-lg font-semibold">{SITE.owner}</p>
+                      <p className="text-[11px] text-cream/85">Owner &amp; Registered Nurse</p>
+                    </div>
+                    <p className="relative text-[10px] italic text-cream/80">Where care feels like home.</p>
+                  </div>
+
+                  {/* BACK */}
+                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-brand/15 bg-cream p-6 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.45)]">
+                    <p className="mb-1 font-serif text-sm font-bold text-brand">Get in touch</p>
+                    <CardLine label="Call / Text" value={primaryPhone.number} />
+                    {officePhone && <CardLine label="Office" value={officePhone.number} />}
+                    <CardLine label="Email" value={SITE.email} />
+                    <CardLine label="Address" value="10524 23rd Dr SE, Everett, WA 98208" />
+                    <span className="mt-2 w-fit rounded-full bg-brand/10 px-3 py-1 text-[9px] font-semibold uppercase tracking-wide text-brand">
+                      Private pay &amp; Medicaid
+                    </span>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            {/* features */}
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFlipped((v) => !v)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand/20 bg-white/70 px-4 py-3 text-sm font-semibold text-brand transition hover:bg-white"
+              >
+                <QuickIcon d="M4 4v5h5M20 20v-5h-5M5 9a7 7 0 0112-3M19 15a7 7 0 01-12 3" />
+                Flip card
+              </button>
+              <button
+                type="button"
+                onClick={downloadVCard}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand/20 bg-white/70 px-4 py-3 text-sm font-semibold text-brand transition hover:bg-white"
+              >
+                <QuickIcon d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8zM19 8v6M22 11h-6" />
+                Save contact
+              </button>
+              <a
+                href={BROCHURE.businessCardUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-cream shadow-brand transition hover:bg-brand/90"
+              >
+                <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                Download card as PDF
+              </a>
+            </div>
+
+            {/* quick actions */}
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <QuickAction href={telHref(primaryPhone.number)} label="Call" d="M3 5a2 2 0 012-2h2.3a1 1 0 01.97.757l.9 3.6a1 1 0 01-.29.96l-1.5 1.5a14 14 0 006.3 6.3l1.5-1.5a1 1 0 01.96-.29l3.6.9A1 1 0 0121 17.7V20a2 2 0 01-2 2A16 16 0 013 5z" />
+              <QuickAction href={smsHref(primaryPhone.number)} label="Text" d="M21 11.5a8.5 8.5 0 01-12.6 7.4L3 20l1.1-5.4A8.5 8.5 0 1121 11.5z" />
+              <QuickAction href={`mailto:${SITE.email}`} label="Email" d="M3 7l9 6 9-6M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z" />
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
+  )
+}
+
+function CardLine({ label, value }: { label: string; value: string }) {
+  return (
+    <p className="flex items-baseline gap-2 text-[11px] leading-tight text-charcoal/80">
+      <span className="min-w-[58px] font-semibold text-brand">{label}</span>
+      <span className="font-medium">{value}</span>
+    </p>
+  )
+}
+
+function QuickAction({ href, label, d }: { href: string; label: string; d: string }) {
+  return (
+    <a
+      href={href}
+      title={label}
+      aria-label={label}
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/15 bg-white/70 text-brand transition hover:bg-brand hover:text-cream"
+    >
+      <QuickIcon d={d} />
+    </a>
+  )
+}
+
+/* ---------- The long inline brochure document ---------- */
+function BrochureDocument() {
+  return (
+    <article className="bg-white text-charcoal">
+      {/* cover */}
+      <div className="relative h-60">
+        <img src={MEDIA.dayExterior} alt="Luna Cottage exterior" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand/90 via-brand/40 to-charcoal/20" />
+        <div className="absolute inset-0 flex flex-col justify-between p-6 text-cream">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/15 font-serif text-xl font-bold">
+              L
+            </span>
+            <div>
+              <p className="font-serif text-lg font-bold leading-none">Luna Cottage</p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-cream/85">Adult Family Home</p>
+            </div>
+          </div>
+          <div>
+            <p className="font-serif text-3xl font-bold leading-tight">Where care feels like home.</p>
+            <p className="mt-2 max-w-md text-sm text-cream/90">
+              A licensed, RN-owned adult family home in a peaceful South Everett neighborhood.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* contact strip */}
+      <div className="flex flex-wrap gap-x-6 gap-y-1 bg-charcoal px-6 py-3 text-[11px] text-cream/85">
+        <span><span className="text-glow">Owner:</span> {SITE.owner}</span>
+        <span><span className="text-glow">Call/Text:</span> {primaryPhone.number}</span>
+        {officePhone && <span><span className="text-glow">Office:</span> {officePhone.number}</span>}
+      </div>
+
+      <div className="space-y-8 p-6 md:p-8">
+        <section>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Welcome</p>
+          <h3 className="mt-1 font-serif text-2xl font-bold">A home built on compassion</h3>
+          {ABOUT_PARAGRAPHS.map((p, i) => (
+            <p key={i} className="mt-3 text-[13px] leading-relaxed text-charcoal/75">{p}</p>
+          ))}
+        </section>
+
+        <blockquote className="rounded-xl border-l-4 border-brand bg-gradient-to-r from-brand/8 to-magenta/5 p-5 font-serif text-base italic leading-relaxed text-charcoal/85">
+          “{MISSION}”
+        </blockquote>
+
+        <section>
+          <h4 className="font-serif text-lg font-semibold text-brand">Our philosophy of care</h4>
+          <p className="mt-2 text-[13px] leading-relaxed text-charcoal/75">{PHILOSOPHY}</p>
+        </section>
+
+        <section>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Services &amp; care</p>
+          <h3 className="mt-1 font-serif text-2xl font-bold">What we provide</h3>
+          <div className="mt-4 space-y-6">
+            {SERVICE_CATEGORIES.map((cat) => (
+              <div key={cat.title}>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/10 text-sm text-brand">
+                    {cat.icon}
+                  </span>
+                  <h4 className="font-serif text-base font-semibold">{cat.title}</h4>
+                </div>
+                <ul className="mt-2 grid grid-cols-1 gap-x-5 gap-y-1.5 sm:grid-cols-2">
+                  {cat.items.map((item) => (
+                    <li key={item} className="flex gap-2 text-[12px] leading-snug text-charcoal/75">
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-brand" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-2xl bg-gradient-to-br from-brand to-magenta p-6 text-cream">
+          <h3 className="font-serif text-xl font-bold">Schedule a visit</h3>
+          <p className="mt-1 text-sm text-cream/90">
+            We would welcome the opportunity to earn your trust and show you the best care in the industry.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-3 text-[12px]">
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-cream/70">Call or Text</p>
+              <p className="font-semibold">{primaryPhone.number}</p>
+            </div>
+            {officePhone && (
+              <div>
+                <p className="text-[9px] uppercase tracking-wider text-cream/70">Office</p>
+                <p className="font-semibold">{officePhone.number}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-cream/70">Email</p>
+              <p className="font-semibold break-all">{SITE.email}</p>
+            </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-cream/70">Address</p>
+              <p className="font-semibold">10524 23rd Dr SE, Everett, WA 98208</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
   )
 }
