@@ -23,9 +23,9 @@ function downloadVCard() {
     'N:Awoke;Fitsum;;;RN, BSN',
     'FN:Fitsum Awoke, RN, BSN',
     'ORG:Luna Cottage Adult Family Home',
-    'TITLE:Owner & Registered Nurse',
     `TEL;TYPE=CELL,VOICE:${primaryPhone.number}`,
     officePhone ? `TEL;TYPE=WORK,VOICE:${officePhone.number}` : '',
+    `TEL;TYPE=FAX:${SITE.fax}`,
     `EMAIL;TYPE=INTERNET:${SITE.email}`,
     'ADR;TYPE=WORK:;;10524 23rd Dr SE;Everett;WA;98208;USA',
     `URL:https://${SITE.website}`,
@@ -105,7 +105,7 @@ export default function Brochure() {
                   <span className="h-2.5 w-2.5 rounded-full bg-magenta/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-glow/80" />
                   <span className="h-2.5 w-2.5 rounded-full bg-brand/60" />
-                  <span className="ml-2 hidden sm:inline">Luna-Cottage-Brochure.pdf</span>
+                  <span className="ml-2 hidden sm:inline">Luna Cottage Brochure</span>
                 </div>
                 <button
                   type="button"
@@ -113,7 +113,7 @@ export default function Brochure() {
                   className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-cream transition hover:bg-brand/90"
                 >
                   <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                  Download PDF
+                  Download
                 </button>
               </div>
 
@@ -137,12 +137,12 @@ export default function Brochure() {
             </p>
 
             {/* flip stage */}
-            <div className="perspective-1200">
+            <div className="perspective-1200 mx-auto w-full max-w-md">
               <button
                 type="button"
                 onClick={() => setFlipped((v) => !v)}
                 aria-label="Flip business card"
-                className="relative block aspect-[7/4] w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                className="relative block aspect-[3.5/2] w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
               >
                 <div
                   className={`transform-style-3d relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -165,19 +165,19 @@ export default function Brochure() {
                     </div>
                     <div>
                       <p className="font-serif text-base font-semibold text-[#faf7f2]">{SITE.owner}</p>
-                      <p className="text-[10px] text-[#c5a880] font-medium tracking-wide uppercase">Owner &amp; Registered Nurse</p>
                     </div>
                     <p className="text-[9px] font-serif italic text-[#faf7f2]/80">Where care feels like home.</p>
                   </div>
 
                   {/* BACK */}
-                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-[#c5a880]/40 bg-[#faf7f2] p-5 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.25)]">
+                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-1.5 overflow-hidden rounded-2xl border border-[#c5a880]/40 bg-[#faf7f2] p-4 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.25)] sm:p-5">
                     <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/25 rounded-xl" />
-                    <p className="mb-0.5 font-serif text-xs font-bold uppercase tracking-wider text-[#2e1447]">Get in touch</p>
+                    <p className="mb-0.5 font-serif text-[11px] font-bold uppercase tracking-wider text-[#2e1447] sm:text-xs">Get in touch</p>
                     <CardLine label="Call / Text" value={primaryPhone.number} />
                     {officePhone && <CardLine label="Office" value={officePhone.number} />}
+                    <CardLine label="Fax" value={SITE.fax} />
                     <CardLine label="Email" value={SITE.email} />
-                    <CardLine label="Address" value="10524 23rd Dr SE, Everett, WA 98208" />
+                    <CardLine label="Address" value={SITE.address} compact />
                     <span className="mt-1 w-fit rounded bg-[#2e1447]/5 border border-[#2e1447]/15 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-[#2e1447]">
                       Private pay &amp; Medicaid
                     </span>
@@ -210,7 +210,7 @@ export default function Brochure() {
                 className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-cream shadow-brand transition hover:bg-brand/90"
               >
                 <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                Download card as PDF
+                Download card
               </button>
             </div>
 
@@ -227,11 +227,11 @@ export default function Brochure() {
   )
 }
 
-function CardLine({ label, value }: { label: string; value: string }) {
+function CardLine({ label, value, compact }: { label: string; value: string; compact?: boolean }) {
   return (
-    <p className="flex items-baseline gap-2 text-[10px] leading-tight text-[#2d2d2d]/90">
-      <span className="min-w-[54px] text-[8px] font-semibold uppercase tracking-wider text-[#2e1447]">{label}</span>
-      <span className="font-medium">{value}</span>
+    <p className="flex items-baseline gap-2 text-[9px] leading-tight text-[#2d2d2d]/90 sm:text-[10px]">
+      <span className="min-w-[48px] shrink-0 text-[7px] font-semibold uppercase tracking-wider text-[#2e1447] sm:min-w-[54px] sm:text-[8px]">{label}</span>
+      <span className={`font-medium ${compact ? 'text-[8px] leading-snug sm:text-[9px]' : ''}`}>{value}</span>
     </p>
   )
 }
@@ -286,6 +286,7 @@ function BrochureDocument() {
           <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Owner:</span>{SITE.owner}</span>
           <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Call/Text:</span>{primaryPhone.number}</span>
           {officePhone && <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Office:</span>{officePhone.number}</span>}
+          <span><span className="font-semibold text-[#c5a880] uppercase tracking-wider text-[9px] mr-1">Fax:</span>{SITE.fax}</span>
         </div>
 
         <div className="space-y-6 px-1">
@@ -355,6 +356,10 @@ function BrochureDocument() {
                   <p className="font-medium">{officePhone.number}</p>
                 </div>
               )}
+              <div>
+                <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Fax</p>
+                <p className="font-medium">{SITE.fax}</p>
+              </div>
               <div>
                 <p className="text-[8px] uppercase tracking-wider text-[#c5a880] font-semibold">Email</p>
                 <p className="font-medium break-all">{SITE.email}</p>

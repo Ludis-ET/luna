@@ -251,30 +251,38 @@
       .lines-container {
         display: flex;
         flex-direction: column;
-        gap: 4.5px;
+        gap: 3.5px;
         margin-top: 2px;
+        flex: 1;
       }
 
       .line { 
         display: flex; 
         align-items: baseline; 
         gap: 6px; 
-        font-size: 10px; 
-        line-height: 1.2;
+        font-size: 9px; 
+        line-height: 1.15;
       }
       
       .line .lbl { 
         color: var(--brand-deep); 
         font-weight: 600; 
-        min-width: 54px;
+        min-width: 50px;
+        flex-shrink: 0;
         text-transform: uppercase;
-        font-size: 8px;
+        font-size: 7px;
         letter-spacing: 0.05em;
       }
       
       .line .val { 
         font-weight: 400; 
         color: var(--charcoal);
+        font-size: 9px;
+      }
+      
+      .line.address .val {
+        font-size: 8px;
+        line-height: 1.25;
       }
       
       .pill {
@@ -301,40 +309,82 @@
         margin-bottom: -16px;
       }
 
+      .print-sheet {
+        width: 8.5in;
+        height: 11in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .print-guide {
+        font-size: 9px;
+        color: #9a9288;
+        text-align: center;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
       @media print {
-        @page { 
-          size: 3.5in 2in; 
-          margin: 0; 
+        @page {
+          size: letter portrait;
+          margin: 0;
         }
-        body { 
-          background: #fff; 
-          padding: 0; 
-          gap: 0; 
-          display: block; 
+
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
-        .toolbar, .caption { 
-          display: none !important; 
+
+        html, body {
+          margin: 0;
+          padding: 0;
+          background: #fff !important;
         }
-        .cards { 
-          display: block; 
-          gap: 0; 
+
+        body {
+          display: block;
+          gap: 0;
         }
-        .card { 
-          box-shadow: none; 
-          border-radius: 0; 
-          page-break-after: always; 
+
+        .toolbar,
+        .caption,
+        .print-guide {
+          display: none !important;
         }
-        .card:last-child { 
-          page-break-after: auto; 
+
+        .print-sheet {
+          width: 8.5in !important;
+          height: 11in !important;
+          page-break-after: always;
+          break-after: page;
+        }
+
+        .print-sheet:last-child {
+          page-break-after: auto;
+          break-after: auto;
+        }
+
+        .cards {
+          gap: 0;
+        }
+
+        .card {
+          width: 3.5in !important;
+          height: 2in !important;
+          box-shadow: none !important;
+          border-radius: 0;
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
       }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <div class="toolbar-text">
-        Ready to print or save. Set destination printer to <strong>Save as PDF</strong> and paper size to <strong>3.5" x 2"</strong> (or print on US Letter card stock).
-      </div>
+      <div class="toolbar-text">Luna Cottage Business Card</div>
       <button class="btn" onclick="window.print()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -345,52 +395,59 @@
       </button>
     </div>
 
-    <p class="caption">Front Side</p>
-    <div class="cards">
-      <div class="card front">
-        <div class="card-border"></div>
-        <div class="card-content">
-          <div class="brand-row">
-            <div class="logo">L</div>
-            <div>
-              <div class="brand-name">Luna Cottage</div>
-              <div class="brand-sub">Adult Family Home</div>
+    <p class="caption">Front</p>
+    <div class="print-sheet">
+      <div class="cards">
+        <div class="card front">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <div class="brand-row">
+              <div class="logo">L</div>
+              <div>
+                <div class="brand-name">Luna Cottage</div>
+                <div class="brand-sub">Adult Family Home</div>
+              </div>
             </div>
+            <div class="front-owner">
+              <div class="name">Fitsum Awoke, RN, BSN</div>
+            </div>
+            <div class="front-tag">Where care feels like home.</div>
           </div>
-          <div class="front-owner">
-            <div class="name">Fitsum Awoke, RN, BSN</div>
-            <div class="role">Owner &amp; Registered Nurse</div>
-          </div>
-          <div class="front-tag">Where care feels like home.</div>
         </div>
       </div>
     </div>
 
-    <p class="caption">Back Side</p>
-    <div class="cards">
-      <div class="card back">
-        <div class="card-border"></div>
-        <div class="card-content">
-          <div class="heading">Get in touch</div>
-          <div class="lines-container">
-            <div class="line">
-              <span class="lbl">Call / Text</span>
-              <span class="val">206-398-9638</span>
+    <p class="caption">Back</p>
+    <div class="print-sheet">
+      <div class="cards">
+        <div class="card back">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <div class="heading">Get in touch</div>
+            <div class="lines-container">
+              <div class="line">
+                <span class="lbl">Call / Text</span>
+                <span class="val">206-398-9638</span>
+              </div>
+              <div class="line">
+                <span class="lbl">Office</span>
+                <span class="val">425-337-9724</span>
+              </div>
+              <div class="line">
+                <span class="lbl">Fax</span>
+                <span class="val">425-357-1170</span>
+              </div>
+              <div class="line">
+                <span class="lbl">Email</span>
+                <span class="val">Emunetluna@gmail.com</span>
+              </div>
+              <div class="line address">
+                <span class="lbl">Address</span>
+                <span class="val">10524 23rd Dr SE, Everett, WA 98208</span>
+              </div>
             </div>
-            <div class="line">
-              <span class="lbl">Office</span>
-              <span class="val">425-337-9724</span>
-            </div>
-            <div class="line">
-              <span class="lbl">Email</span>
-              <span class="val">Emunetluna@gmail.com</span>
-            </div>
-            <div class="line">
-              <span class="lbl">Address</span>
-              <span class="val">10524 23rd Dr SE, Everett, WA 98208</span>
-            </div>
+            <span class="pill">Private pay &amp; Medicaid accepted</span>
           </div>
-          <span class="pill">Private pay &amp; Medicaid accepted</span>
         </div>
       </div>
     </div>

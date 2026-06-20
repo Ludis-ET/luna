@@ -17,3 +17,11 @@ export function scrollToY(top: number, immediate = true) {
   }
   window.scrollTo({ top, behavior: 'auto' })
 }
+
+export function scrollByY(delta: number, immediate = true) {
+  if (lenis) {
+    lenis.scrollTo(lenis.scroll + delta, { immediate })
+    return
+  }
+  window.scrollBy({ top: delta, behavior: immediate ? 'auto' : 'smooth' })
+}

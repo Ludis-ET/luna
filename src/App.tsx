@@ -3,7 +3,6 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
 import Services from './components/Services'
-import Mission from './components/Mission'
 import Gallery from './components/Gallery'
 import Brochure from './components/Brochure'
 import Tour from './components/Tour'
@@ -19,7 +18,6 @@ export default function App() {
           <Hero />
           <About />
           <Services />
-          <Mission />
           <Gallery />
           <Tour />
           <Brochure />

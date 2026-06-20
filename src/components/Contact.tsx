@@ -134,7 +134,6 @@ export default function Contact() {
             <div className="glass-card rounded-2xl p-6">
               <p className="text-xs font-bold uppercase tracking-widest text-brand">Your contact</p>
               <p className="mt-1 font-serif text-2xl font-bold text-charcoal">{SITE.owner}</p>
-              <p className="text-sm text-charcoal/70">Owner &amp; Registered Nurse</p>
             </div>
 
             <div className="glass-card rounded-2xl p-6">

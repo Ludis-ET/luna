@@ -574,47 +574,213 @@
         margin-top: 16px;
       }
 
+      @media screen and (max-width: 900px) {
+        .page {
+          width: 100%;
+          max-width: 8.5in;
+          height: auto;
+          min-height: 0;
+        }
+        .cover-hero {
+          height: 52vw;
+          max-height: 4.8in;
+        }
+      }
+
       @media print {
-        @page { 
-          size: Letter; 
-          margin: 0; 
+        @page {
+          size: letter portrait;
+          margin: 0;
         }
-        body { 
-          background: #fff; 
-          padding: 0; 
-          gap: 0; 
-          display: block; 
+
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
-        .toolbar, .caption { 
-          display: none !important; 
+
+        html, body {
+          width: 8.5in;
+          margin: 0;
+          padding: 0;
+          background: #fff !important;
         }
-        .page { 
-          box-shadow: none; 
-          page-break-after: always; 
+
+        body {
+          display: block;
+          gap: 0;
         }
-        .page:last-child { 
-          page-break-after: auto; 
+
+        .toolbar,
+        .caption {
+          display: none !important;
+        }
+
+        .page {
+          width: 8.5in !important;
+          height: 11in !important;
+          max-width: none;
+          min-height: 0;
+          margin: 0;
+          padding: 0.45in !important;
+          box-shadow: none !important;
+          overflow: hidden;
+          page-break-after: always;
+          break-after: page;
+          break-inside: avoid;
+        }
+
+        .page:last-child {
+          page-break-after: auto;
+          break-after: auto;
+        }
+
+        .border-inset {
+          inset: 0.22in;
+        }
+
+        .content-wrapper {
+          padding: 0.2in;
+          justify-content: flex-start;
+          gap: 0;
+        }
+
+        /* Page 1 balance */
+        .cover-hero {
+          height: 3.35in !important;
+          margin: -0.2in -0.2in 0 !important;
+        }
+
+        .cover-title {
+          font-size: 38px !important;
+        }
+
+        .cover-tag {
+          font-size: 12.5px !important;
+          margin-top: 10px !important;
+        }
+
+        .cover-strip {
+          padding: 10px 16px !important;
+          font-size: 10.5px !important;
+          gap: 4px 12px !important;
+        }
+
+        .section-welcome {
+          padding: 14px 4px 4px !important;
+          flex: 0 1 auto;
+        }
+
+        h2.title {
+          font-size: 26px !important;
+          margin-bottom: 8px !important;
+        }
+
+        p.body {
+          font-size: 11.5px !important;
+          line-height: 1.55 !important;
+          margin-top: 6px !important;
+        }
+
+        .welcome-body::first-letter {
+          font-size: 2.8rem !important;
+        }
+
+        .quote {
+          margin: 12px 0 !important;
+          padding: 14px 18px !important;
+        }
+
+        .quote-text {
+          font-size: 14px !important;
+        }
+
+        .philosophy-title {
+          font-size: 16px !important;
+          margin-top: 8px !important;
+        }
+
+        .foot {
+          margin-top: auto;
+          padding-top: 8px !important;
+        }
+
+        /* Page 2 balance */
+        .grid2 {
+          gap: 20px !important;
+          margin-top: 4px !important;
+        }
+
+        h3.sub {
+          font-size: 17px !important;
+          margin-bottom: 8px !important;
+        }
+
+        ul.feat {
+          gap: 5px !important;
+        }
+
+        ul.feat li {
+          font-size: 10.5px !important;
+          line-height: 1.35 !important;
+        }
+
+        .chip {
+          font-size: 9px !important;
+          padding: 3px 7px !important;
+        }
+
+        .photo-band {
+          height: 1.35in !important;
+          margin: 10px 0 !important;
+        }
+
+        .cta {
+          padding: 14px 16px !important;
+        }
+
+        .cta h3 {
+          font-size: 19px !important;
+        }
+
+        .cta-desc {
+          font-size: 10.5px !important;
+          margin-bottom: 10px !important;
+        }
+
+        .cta .rows {
+          gap: 8px 14px !important;
+        }
+
+        .cta .rows .val {
+          font-size: 11px !important;
+        }
+
+        .cta .badges {
+          margin-top: 10px !important;
+        }
+
+        .cta .badge {
+          font-size: 8.5px !important;
+          padding: 3px 8px !important;
         }
       }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <div class="toolbar-text">
-        Ready to print or save. Destination should be set to <strong>Save as PDF</strong>.
-      </div>
+      <div class="toolbar-text">Luna Cottage Brochure</div>
       <button class="btn" onclick="window.print()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        Save as PDF
+        Download
       </button>
     </div>
 
     <!-- ============ PAGE 1 ============ -->
-    <p class="caption">Page 1: Welcome & Overview</p>
+    <p class="caption">Welcome</p>
     <section class="page">
       <div class="border-inset"></div>
       <div class="content-wrapper">
@@ -642,6 +808,7 @@
           <span><b>Owner:</b> Fitsum Awoke, RN, BSN</span>
           <span><b>Call or Text:</b> 206-398-9638</span>
           <span><b>Office:</b> 425-337-9724</span>
+          <span><b>Fax:</b> 425-357-1170</span>
           <span><b>Email:</b> Emunetluna@gmail.com</span>
         </div>
 
@@ -677,13 +844,13 @@
         </div>
 
         <div class="foot">
-          Luna Cottage Adult Family Home · 10524 23rd Dr SE, Everett, WA 98208 · Page 1 of 2
+          Luna Cottage Adult Family Home · 10524 23rd Dr SE, Everett, WA 98208
         </div>
       </div>
     </section>
 
     <!-- ============ PAGE 2 ============ -->
-    <p class="caption">Page 2: Care, Specializations & Contact</p>
+    <p class="caption">Services &amp; Contact</p>
     <section class="page">
       <div class="border-inset"></div>
       <div class="content-wrapper">
@@ -779,6 +946,10 @@
               <div class="val">425-337-9724</div>
             </div>
             <div>
+              <div class="lbl">Fax</div>
+              <div class="val">425-357-1170</div>
+            </div>
+            <div>
               <div class="lbl">Email</div>
               <div class="val" style="font-size: 11.5px;">Emunetluna@gmail.com</div>
             </div>
@@ -795,7 +966,7 @@
         </div>
 
         <div class="foot">
-          Luna Cottage Adult Family Home · Owner: Fitsum Awoke, RN, BSN · Page 2 of 2
+          Luna Cottage Adult Family Home · Owner: Fitsum Awoke, RN, BSN
         </div>
       </div>
     </section>
