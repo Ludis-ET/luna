@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import type { ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import {
@@ -15,6 +15,14 @@ const primaryPhone = SITE.phones.find((p) => p.primary) ?? SITE.phones[0]
 const officePhone = SITE.phones.find((p) => !p.primary)
 const telHref = (n: string) => `tel:${n.replace(/[^\d+]/g, '')}`
 const smsHref = (n: string) => `sms:${n.replace(/[^\d+]/g, '')}`
+
+// Card palette as inline colors so the card always renders gold/cream text,
+// independent of Tailwind class generation or a stale CSS cache.
+const GOLD = '#C5A880'
+const GOLD_90 = 'rgba(197,168,128,0.9)'
+const GOLD_45 = 'rgba(197,168,128,0.45)'
+const GOLD_30 = 'rgba(197,168,128,0.3)'
+const CREAM = '#FAF7F2'
 
 function downloadVCard() {
   const lines = [
@@ -75,8 +83,6 @@ const QuickIcon = ({ d }: { d: string }) => (
 )
 
 export default function Brochure() {
-  const [flipped, setFlipped] = useState(false)
-
   return (
     <section id="brochure" className="section-pad bg-gradient-to-b from-cream via-cream to-lavender/20">
       <div className="container-max px-6">
@@ -133,69 +139,95 @@ export default function Brochure() {
             className="lg:col-span-2 lg:sticky lg:top-28"
           >
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-plum/50">
-              Tap the card to flip
+              Our business card
             </p>
 
-            {/* flip stage */}
-            <div className="perspective-1200 mx-auto w-full max-w-md">
-              <button
-                type="button"
-                onClick={() => setFlipped((v) => !v)}
-                aria-label="Flip business card"
-                className="relative block aspect-[3.5/2] w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            {/* static business card: matches the printable PDF exactly */}
+            <div className="mx-auto w-full max-w-md">
+              <div
+                className="relative overflow-hidden rounded-2xl font-outfit shadow-[0_30px_70px_-20px_rgba(46,20,71,0.55)]"
+                style={{
+                  color: GOLD,
+                  background:
+                    'radial-gradient(120% 85% at 62% -12%, rgba(197,168,128,0.16) 0%, transparent 52%), linear-gradient(145deg, #371a52 0%, #2e1447 46%, #25103a 100%)',
+                }}
               >
+                {/* double gold frame */}
                 <div
-                  className={`transform-style-3d relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                    flipped ? 'rotate-y-180' : ''
-                  }`}
+                  className="pointer-events-none absolute inset-3 z-10 rounded-[10px]"
+                  style={{ border: `1px solid ${GOLD}` }}
                 >
-                  {/* FRONT */}
-                  <div className="backface-hidden absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl bg-[#2e1447] p-5 text-[#faf7f2] shadow-[0_24px_60px_-20px_rgba(46,20,71,0.6)] border border-[#c5a880]/30">
-                    <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/30 rounded-xl" />
-                    <div className="relative flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#c5a880] bg-white/5 font-serif text-lg font-bold text-[#c5a880]">
+                  <div className="absolute inset-1 rounded-[7px]" style={{ border: `1px solid ${GOLD_45}` }} />
+                </div>
+
+                <div className="relative z-[4] flex">
+                  {/* brand side */}
+                  <div
+                    className="flex flex-[0_0_45%] flex-col justify-between gap-6 py-7 pl-6 pr-4"
+                    style={{ borderRight: `1px solid ${GOLD_30}` }}
+                  >
+                    <div>
+                      <span
+                        className="flex h-12 w-12 items-center justify-center rounded-full font-cormorant text-2xl font-semibold"
+                        style={{ color: GOLD, border: `1px solid ${GOLD}`, background: 'rgba(255,255,255,0.05)' }}
+                      >
                         L
                       </span>
-                      <div>
-                        <p className="font-serif text-base font-bold leading-none text-[#faf7f2]">Luna Cottage</p>
-                        <p className="mt-1 text-[8px] uppercase tracking-[0.2em] text-[#c5a880] font-semibold">
-                          Adult Family Home
-                        </p>
-                      </div>
+                      <p className="mt-3.5 font-cormorant text-[26px] font-bold leading-none" style={{ color: GOLD }}>
+                        Luna Cottage
+                      </p>
+                      <p
+                        className="mt-2 text-[9px] font-medium uppercase tracking-[0.25em]"
+                        style={{ color: GOLD }}
+                      >
+                        Adult Family Home
+                      </p>
                     </div>
                     <div>
-                      <p className="font-serif text-base font-semibold text-[#faf7f2]">{SITE.owner}</p>
+                      <p className="font-cormorant text-xl font-semibold leading-tight" style={{ color: CREAM }}>
+                        {SITE.owner}
+                      </p>
+                      <p className="mt-2.5 font-cormorant text-[13px] italic" style={{ color: GOLD_90 }}>
+                        Where care feels like home.
+                      </p>
                     </div>
-                    <p className="text-[9px] font-serif italic text-[#faf7f2]/80">Where care feels like home.</p>
                   </div>
 
-                  {/* BACK */}
-                  <div className="backface-hidden rotate-y-180 absolute inset-0 flex flex-col justify-center gap-1.5 overflow-hidden rounded-2xl border border-[#c5a880]/40 bg-[#faf7f2] p-4 shadow-[0_24px_60px_-20px_rgba(45,45,45,0.25)] sm:p-5">
-                    <div className="absolute inset-2 pointer-events-none border border-[#c5a880]/25 rounded-xl" />
-                    <p className="mb-0.5 font-serif text-[11px] font-bold uppercase tracking-wider text-[#2e1447] sm:text-xs">Get in touch</p>
-                    <CardLine label="Call / Text" value={primaryPhone.number} />
-                    {officePhone && <CardLine label="Office" value={officePhone.number} />}
-                    <CardLine label="Fax" value={SITE.fax} />
-                    <CardLine label="Email" value={SITE.email} />
-                    <CardLine label="Address" value={SITE.address} compact />
-                    <span className="mt-1 w-fit rounded bg-[#2e1447]/5 border border-[#2e1447]/15 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-[#2e1447]">
-                      Private pay &amp; Medicaid
-                    </span>
+                  {/* info side */}
+                  <div className="flex flex-1 flex-col justify-center gap-2.5 py-7 pl-5 pr-6">
+                    <div className="relative pb-2">
+                      <p className="font-cormorant text-lg font-semibold" style={{ color: GOLD }}>
+                        Get in touch
+                      </p>
+                      <span
+                        className="absolute bottom-0 left-0 h-px w-full"
+                        style={{ background: `linear-gradient(90deg, ${GOLD}, ${GOLD_30})` }}
+                      />
+                    </div>
+                    <CardRow label="Call or Text" value={primaryPhone.number}>
+                      <Svg><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.3a1 1 0 01.97.757l.9 3.6a1 1 0 01-.29.96l-1.5 1.5a14 14 0 006.3 6.3l1.5-1.5a1 1 0 01.96-.29l3.6.9A1 1 0 0121 17.7V20a2 2 0 01-2 2A16 16 0 013 5z" /></Svg>
+                    </CardRow>
+                    {officePhone && (
+                      <CardRow label="Office" value={officePhone.number}>
+                        <Svg><path strokeLinecap="round" strokeLinejoin="round" d="M3 9.5L12 4l9 5.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" /></Svg>
+                      </CardRow>
+                    )}
+                    <CardRow label="Fax" value={SITE.fax}>
+                      <Svg><path strokeLinecap="round" strokeLinejoin="round" d="M7 9V3h10v6M7 19H5a2 2 0 01-2-2v-3a2 2 0 012-2h14a2 2 0 012 2v3a2 2 0 01-2 2h-2M7 15h10v6H7z" /></Svg>
+                    </CardRow>
+                    <CardRow label="Email" value={SITE.email}>
+                      <Svg><path strokeLinecap="round" strokeLinejoin="round" d="M3 7l9 6 9-6M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z" /></Svg>
+                    </CardRow>
+                    <CardRow label="Address" value={SITE.address}>
+                      <Svg><path strokeLinecap="round" strokeLinejoin="round" d="M12 21s-7-5.2-7-11a7 7 0 0114 0c0 5.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></Svg>
+                    </CardRow>
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
 
             {/* features */}
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setFlipped((v) => !v)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 bg-white/70 px-5 py-3.5 text-base font-semibold text-plum transition hover:bg-white"
-              >
-                <QuickIcon d="M4 4v5h5M20 20v-5h-5M5 9a7 7 0 0112-3M19 15a7 7 0 01-12 3" />
-                Flip card
-              </button>
               <button
                 type="button"
                 onClick={downloadVCard}
@@ -207,7 +239,7 @@ export default function Brochure() {
               <button
                 type="button"
                 onClick={() => printDocument(BROCHURE.businessCardUrl)}
-                className="col-span-2 btn-primary justify-center py-3.5"
+                className="btn-primary justify-center py-3.5"
               >
                 <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
                 Download card
@@ -227,12 +259,27 @@ export default function Brochure() {
   )
 }
 
-function CardLine({ label, value, compact }: { label: string; value: string; compact?: boolean }) {
+const Svg = ({ children }: { children: ReactNode }) => (
+  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+    {children}
+  </svg>
+)
+
+function CardRow({ label, value, children }: { label: string; value: string; children: ReactNode }) {
   return (
-    <p className="flex items-baseline gap-2 text-[9px] leading-tight text-[#2d2d2d]/90 sm:text-[10px]">
-      <span className="min-w-[48px] shrink-0 text-[7px] font-semibold uppercase tracking-wider text-[#2e1447] sm:min-w-[54px] sm:text-[8px]">{label}</span>
-      <span className={`font-medium ${compact ? 'text-[8px] leading-snug sm:text-[9px]' : ''}`}>{value}</span>
-    </p>
+    <div className="flex items-start gap-2.5">
+      <span className="mt-[3px] w-4 shrink-0" style={{ color: GOLD }}>
+        {children}
+      </span>
+      <span className="leading-tight">
+        <span className="block text-[8px] font-semibold uppercase tracking-[0.14em]" style={{ color: GOLD }}>
+          {label}
+        </span>
+        <span className="block break-words text-[13px] font-semibold" style={{ color: CREAM }}>
+          {value}
+        </span>
+      </span>
+    </div>
   )
 }
 

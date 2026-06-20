@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { GALLERY_IMAGES, type GalleryTag } from '../data/media'
@@ -119,16 +120,17 @@ export default function Gallery() {
         </motion.div>
       </div>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-charcoal/95 p-4 backdrop-blur-md sm:p-8"
-            onClick={closeLightbox}
-          >
+      {/* Lightbox: portaled to <body> so it always covers the full viewport, above the header */}
+      {createPortal(
+        <AnimatePresence>
+          {active && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-charcoal/95 p-4 backdrop-blur-md sm:p-8"
+              onClick={closeLightbox}
+            >
             <button
               type="button"
               onClick={closeLightbox}
@@ -184,7 +186,9 @@ export default function Gallery() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body,
+      )}
     </section>
   )
 }
