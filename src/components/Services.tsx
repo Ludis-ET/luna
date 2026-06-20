@@ -85,7 +85,7 @@ export default function Services() {
                     data-item
                     className="relative pl-4 text-base leading-relaxed text-[#faf7f2]/90"
                   >
-                    <span className="absolute left-0 top-2.5 text-[9px] text-[#c5a880]" aria-hidden
+                    <span className="absolute left-0 top-2.5 text-[9px] text-[#c5a880]" aria-hidden>
                       ◆
                     </span>
                     {item}
