@@ -7,7 +7,7 @@ import { GALLERY_IMAGES, type GalleryTag } from '../data/media'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const FILTERS: Array<GalleryTag | 'All'> = ['All', 'Exterior', 'Living', 'Dining']
+const FILTERS: Array<GalleryTag | 'All'> = ['All', 'Exterior', 'Living', 'Dining', 'Comfort']
 
 export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -54,8 +54,8 @@ export default function Gallery() {
             Experience the Home
           </h2>
           <p className="mt-3 max-w-2xl text-cream/65">
-            Scroll through a day at Luna Cottage, from a warm welcome at the door to safe,
-            serene evenings.
+            Scroll through Luna Cottage — from a warm welcome at the door to private bedrooms,
+            accessible baths, sunny patio gatherings, and peaceful evenings.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2">

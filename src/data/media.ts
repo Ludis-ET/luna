@@ -12,6 +12,12 @@ export const MEDIA = {
   livingCozy: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM.jpeg'),
   bedroomAccessible: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM (1).jpeg'),
   bedroomCozy: asset('WhatsApp Image 2026-06-18 at 8.54.09 AM (2).jpeg'),
+  patioDining: asset('2.jpeg'),
+  patioGarden: asset('4.jpeg'),
+  patioWelcome: asset('5.jpeg'),
+  bathroomGrabBar: asset('6.jpeg'),
+  bathroomWalkIn: asset('7.jpeg'),
+  bedroomPrivate: asset('WhatsApp Image 2026-06-19 at 7.34.19 AM.jpeg'),
 } as const
 
 // Gallery doubles as the resident experience: each image carries a short
@@ -23,6 +29,13 @@ export const GALLERY_IMAGES = [
     title: 'Arrive with confidence',
     caption: 'A beautiful home in a quiet South Everett neighborhood',
     alt: 'Day exterior of Luna Cottage',
+  },
+  {
+    src: MEDIA.patioWelcome,
+    tag: 'Exterior',
+    title: 'Sunshine steps away',
+    caption: 'Step from the home straight onto a bright, welcoming patio',
+    alt: 'Patio dining area viewed from the doorway with flowers and yellow umbrella',
   },
   {
     src: MEDIA.livingRoom,
@@ -39,6 +52,13 @@ export const GALLERY_IMAGES = [
     alt: 'Cozy living room area',
   },
   {
+    src: MEDIA.bedroomPrivate,
+    tag: 'Living',
+    title: 'Your own peaceful retreat',
+    caption: 'Private bedrooms with comfortable seating, soft light, and room to unwind',
+    alt: 'Private resident bedroom with armchair, lamp, and neatly made bed',
+  },
+  {
     src: MEDIA.bedroomAccessible,
     tag: 'Living',
     title: 'Comfort meets accessibility',
@@ -53,6 +73,20 @@ export const GALLERY_IMAGES = [
     alt: 'Resident bedroom with cozy quilted bedding',
   },
   {
+    src: MEDIA.bathroomWalkIn,
+    tag: 'Comfort',
+    title: 'Walk-in showers built for safety',
+    caption: 'Barrier-free showers with grab bars and non-slip flooring',
+    alt: 'Accessible walk-in shower with grab bars and handheld showerhead',
+  },
+  {
+    src: MEDIA.bathroomGrabBar,
+    tag: 'Comfort',
+    title: 'Bathrooms designed with care',
+    caption: 'Handicap-friendly fixtures and safety rails in every resident bath',
+    alt: 'Accessible bathroom with pedestal sink and toilet grab bar',
+  },
+  {
     src: MEDIA.dining,
     tag: 'Dining',
     title: 'Meals cooked with love',
@@ -65,6 +99,20 @@ export const GALLERY_IMAGES = [
     title: 'Nutrition for every need',
     caption: 'An open kitchen and dining area with table service',
     alt: 'Open kitchen and dining area',
+  },
+  {
+    src: MEDIA.patioDining,
+    tag: 'Exterior',
+    title: 'Patio gatherings & outdoor meals',
+    caption: 'Shaded seating for barbecues, conversation, and fresh-air dining',
+    alt: 'Backyard patio with glass dining table, cushioned chairs, and yellow umbrella',
+  },
+  {
+    src: MEDIA.patioGarden,
+    tag: 'Exterior',
+    title: 'Landscaped paths & blooming roses',
+    caption: 'A secure backyard with garden walks, flowers, and room to breathe',
+    alt: 'Garden path with gravel walkway, white fence, and red roses',
   },
   {
     src: MEDIA.nightPath,
