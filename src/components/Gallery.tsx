@@ -54,7 +54,7 @@ export default function Gallery() {
             Experience the Home
           </h2>
           <p className="mt-3 max-w-2xl text-cream/65">
-            Scroll through Luna Cottage — from a warm welcome at the door to private bedrooms,
+            Scroll through Luna Cottage, from a warm welcome at the door to private bedrooms,
             accessible baths, sunny patio gatherings, and peaceful evenings.
           </p>
 

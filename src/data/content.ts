@@ -98,11 +98,11 @@ export const SERVICE_CATEGORIES = [
     icon: '♥',
     items: [
       'Nurse-led case management and clinical oversight',
-      'Awake caregivers on duty around the clock — day and night',
+      'Awake caregivers on duty around the clock, day and night',
       'Care plans tailored at move-in and reviewed as needs change',
       'Prescription support: administering, monitoring, and managing medications',
       'Scheduling help and transportation for medical appointments',
-      'Vital tracking — glucose, blood pressure, weight, and related charting',
+      'Vital tracking: glucose, blood pressure, weight, and related charting',
       'Nurse-delegated diabetes care and insulin management',
       'Wound care, injections, eye drops, and catheter assistance',
       'Physician and podiatrist visits arranged in the home',
@@ -155,7 +155,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Our Home & Comfort Features',
     icon: '⌂',
     items: [
-      'Private rooms — several with attached bathrooms',
+      'Private rooms, several with attached bathrooms',
       'Fully wheelchair and walker accessible throughout',
       'Bright shared living and dining spaces',
       'Accessible bathrooms with walk-in showers',
