@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { GALLERY_IMAGES, type GalleryTag } from '../data/media'
-import { scrollByY, scrollToY } from '../lib/scroll'
+import { getScrollY, scrollByY, scrollToY } from '../lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,7 +15,7 @@ function getHorizontalScroll(strip: HTMLElement) {
 }
 
 function isScrolledIntoGallery(section: HTMLElement) {
-  const scrollY = window.scrollY
+  const scrollY = getScrollY()
   const top = section.offsetTop
   const bottom = top + section.offsetHeight
   return scrollY >= top - 120 && scrollY < bottom - 120
@@ -30,9 +30,26 @@ function horizontalDeltaToScroll(delta: number, maxX: number, st: ScrollTrigger)
   return -(delta / maxX) * galleryScrollRange(st)
 }
 
+function waitForStripImages(strip: HTMLElement) {
+  const imgs = Array.from(strip.querySelectorAll('img'))
+  if (imgs.length === 0) return Promise.resolve()
+
+  return Promise.all(
+    imgs.map(
+      (img) =>
+        new Promise<void>((resolve) => {
+          if (img.complete) resolve()
+          else {
+            img.addEventListener('load', () => resolve(), { once: true })
+            img.addEventListener('error', () => resolve(), { once: true })
+          }
+        }),
+    ),
+  )
+}
+
 export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null)
-  const pinRef = useRef<HTMLDivElement>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const skipFilterAnchor = useRef(true)
   const dragRef = useRef<{ active: boolean; startX: number; startScroll: number; moved: boolean }>({
@@ -58,29 +75,51 @@ export default function Gallery() {
   // Vertical scroll pins the section and drives horizontal movement.
   useLayoutEffect(() => {
     const section = sectionRef.current
-    const pin = pinRef.current
     const strip = stripRef.current
-    if (!section || !pin || !strip) return
+    if (!section || !strip) return
 
-    const ctx = gsap.context(() => {
-      gsap.to(strip, {
-        x: () => -getHorizontalScroll(strip),
-        ease: 'none',
-        scrollTrigger: {
-          id: 'gallery-horizontal',
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${getHorizontalScroll(strip) + window.innerHeight * 0.5}`,
-          pin: pin,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-    }, section)
+    let cancelled = false
+    let ctx: gsap.Context | null = null
 
-    return () => ctx.revert()
-  }, [])
+    const scrollLength = () => getHorizontalScroll(strip) + window.innerHeight * 0.5
+
+    const setup = () => {
+      if (cancelled) return
+      ctx?.revert()
+
+      ctx = gsap.context(() => {
+        gsap.timeline({
+          scrollTrigger: {
+            id: 'gallery-horizontal',
+            trigger: section,
+            start: 'top top',
+            end: () => `+=${scrollLength()}`,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 0,
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
+        }).to(strip, {
+          x: () => -getHorizontalScroll(strip),
+          ease: 'none',
+        })
+      }, section)
+
+      ScrollTrigger.refresh()
+    }
+
+    void waitForStripImages(strip).then(setup)
+
+    const onResize = () => ScrollTrigger.refresh()
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('resize', onResize)
+      ctx?.revert()
+    }
+  }, [filtered])
 
   // When the filter changes, reset the strip and re-anchor scroll inside the gallery.
   useLayoutEffect(() => {
@@ -180,14 +219,18 @@ export default function Gallery() {
   }, [])
 
   return (
-    <section id="gallery" ref={sectionRef} className="relative bg-charcoal">
-      <div ref={pinRef} className="flex h-screen flex-col justify-center overflow-hidden py-16 sm:py-24">
+    <section
+      id="gallery"
+      ref={sectionRef}
+      className="relative min-h-[100svh] bg-charcoal"
+    >
+      <div className="flex min-h-[100svh] w-full flex-col justify-center py-16 sm:py-24">
         <div className="container-max mb-6 px-4 sm:mb-8 sm:px-6">
           <SectionLabel number="03" label="Gallery" light />
           <h2 className="font-serif text-3xl font-bold text-cream md:text-5xl">
             Experience the Home
           </h2>
-          <p className="mt-3 max-w-2xl text-sm text-cream/65 sm:text-base">
+          <p className="mt-3 max-w-2xl text-base text-cream/65 sm:text-lg">
             Scroll through Luna Cottage, from a warm welcome at the door to private bedrooms,
             accessible baths, sunny patio gatherings, and peaceful evenings.
           </p>
@@ -218,7 +261,7 @@ export default function Gallery() {
           onPointerUp={endStripDrag}
           onPointerCancel={endStripDrag}
         >
-          {filtered.map((img) => (
+          {filtered.map((img, i) => (
             <motion.button
               key={img.src}
               type="button"
@@ -232,7 +275,15 @@ export default function Gallery() {
               }}
               className="group relative h-[50vh] w-[85vw] max-w-md shrink-0 overflow-hidden rounded-2xl ring-2 ring-transparent transition hover:ring-glow/50 sm:h-[55vh] sm:w-[80vw] sm:rounded-3xl md:w-[45vw]"
             >
-              <img src={img.src} alt={img.alt} className="h-full w-full object-cover" loading="lazy" />
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={640}
+                height={480}
+                className="h-full w-full object-cover"
+                loading={i < 3 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-4 text-left sm:p-6">
                 <p className="font-serif text-lg font-semibold text-cream sm:text-xl md:text-2xl">{img.title}</p>

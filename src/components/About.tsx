@@ -209,18 +209,18 @@ function HangingCard({
               </span>
               <div className="min-w-0 pt-0.5">
                 <p
-                  className={`text-[9px] font-semibold uppercase tracking-[0.24em] ${
-                    isDark ? 'text-[#c5a880]' : 'text-brand'
+                  className={`text-[10px] font-semibold uppercase tracking-[0.24em] sm:text-xs ${
+                    isDark ? 'text-[#c5a880]' : 'text-gold'
                   }`}
                 >
                   {label}
                 </p>
-                <h3 className="mt-1 font-serif text-xl font-bold leading-tight sm:text-2xl">{title}</h3>
+                <h3 className="mt-1 font-serif text-2xl font-bold leading-tight sm:text-3xl">{title}</h3>
               </div>
             </div>
 
             <p
-              className={`text-sm leading-relaxed sm:text-[15px] sm:leading-relaxed ${
+              className={`text-base leading-relaxed sm:text-lg ${
                 isDark ? 'text-[#faf7f2]/88' : 'text-charcoal/78'
               }`}
             >
@@ -228,8 +228,8 @@ function HangingCard({
             </p>
 
             <p
-              className={`mt-6 border-t pt-4 font-serif text-[11px] italic ${
-                isDark ? 'border-[#c5a880]/20 text-[#c5a880]/75' : 'border-[#2e1447]/10 text-brand/55'
+              className={`mt-6 border-t pt-4 font-serif text-sm italic ${
+                isDark ? 'border-[#c5a880]/20 text-[#c5a880]/75' : 'border-plum/10 text-gold/70'
               }`}
             >
               Where care feels like home.
@@ -256,20 +256,20 @@ export default function About() {
           transition={{ duration: 0.6 }}
         >
           <SectionLabel number="01" label="About" />
-          <h2 className="font-serif text-3xl font-semibold text-charcoal md:text-5xl">
-            A home built on <span className="text-brand">compassion</span>
+          <h2 className="section-title font-semibold">
+            A home built on <span className="text-gold">compassion</span>
           </h2>
 
           {ABOUT_PARAGRAPHS.map((paragraph, i) => (
             <p
               key={i}
-              className={`text-base leading-relaxed text-charcoal/75 md:text-lg ${i === 0 ? 'mt-6' : 'mt-4'}`}
+              className={`text-body-lg text-charcoal/75 md:text-lg ${i === 0 ? 'mt-6' : 'mt-4'}`}
             >
               {paragraph}
             </p>
           ))}
 
-          <p className="mt-8 text-sm italic text-charcoal/60 md:text-base">
+          <p className="mt-8 text-base italic text-charcoal/60 md:text-lg">
             We would welcome the opportunity to earn your trust and show you the best care in the
             industry.
           </p>
@@ -295,8 +295,8 @@ export default function About() {
             transition={{ duration: 0.5, delay: 0.35 }}
             className="absolute -bottom-4 -left-4 rounded-xl border border-[#c5a880]/30 bg-[#2e1447] px-5 py-3.5 shadow-[0_16px_40px_-12px_rgba(46,20,71,0.45)]"
           >
-            <p className="font-serif text-2xl font-bold text-[#c5a880]">6</p>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#faf7f2]/70">
+            <p className="font-serif text-3xl font-bold text-gold">6</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-creamCard/70">
               private rooms
             </p>
           </motion.div>
@@ -343,8 +343,8 @@ export default function About() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Values &amp; Approach</p>
-          <h3 className="mt-2 font-serif text-2xl font-semibold text-charcoal md:text-3xl">
+          <p className="label-gold">Values &amp; Approach</p>
+          <h3 className="mt-2 font-serif text-3xl font-semibold text-charcoal md:text-4xl">
             How we care, every day
           </h3>
         </motion.div>
@@ -357,12 +357,12 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="flex items-start gap-3 rounded-2xl border border-[#c5a880]/20 bg-white/70 p-5 shadow-sm backdrop-blur-sm transition hover:border-brand/25 hover:shadow-md"
+              className="flex items-start gap-3 rounded-2xl border border-brand/10 bg-white/70 p-6 shadow-sm backdrop-blur-sm transition hover:border-brand/25 hover:shadow-md"
             >
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#c5a880]/40 bg-[#2e1447] text-[10px] font-bold text-[#c5a880]">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs text-cream">
                 ✓
               </span>
-              <span className="text-sm leading-snug text-charcoal/80 md:text-base">{value}</span>
+              <span className="text-base leading-snug text-charcoal/80 md:text-lg">{value}</span>
             </motion.li>
           ))}
         </ul>
@@ -375,15 +375,15 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl border border-[#c5a880]/25 bg-[#2e1447] p-8 text-[#faf7f2] shadow-[0_28px_70px_-24px_rgba(46,20,71,0.55)] md:p-12"
+          className="relative overflow-hidden rounded-3xl border border-gold/30 bg-plum p-8 text-creamCard shadow-[0_28px_70px_-24px_rgba(46,20,71,0.55)] md:p-12"
         >
-          <div className="pointer-events-none absolute inset-3 rounded-2xl border border-[#c5a880]/20" aria-hidden />
+          <div className="pointer-events-none absolute inset-3 rounded-2xl border border-gold/20" aria-hidden />
           <div className="relative">
-            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#c5a880]">Our Staff</p>
-            <h3 className="mt-2 max-w-2xl font-serif text-2xl font-semibold md:text-3xl">
+            <p className="label-gold">Our Staff</p>
+            <h3 className="mt-2 max-w-2xl font-serif text-3xl font-semibold md:text-4xl">
               Trained, trusted, and always learning
             </h3>
-            <p className="mt-4 max-w-3xl leading-relaxed text-[#faf7f2]/80">{STAFF_TEXT}</p>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-creamCard/85 md:text-lg">{STAFF_TEXT}</p>
           </div>
         </motion.div>
       </div>

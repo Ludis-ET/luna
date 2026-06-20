@@ -122,23 +122,23 @@ export default function Contact() {
     <section id="contact" className="section-pad bg-gradient-to-b from-lavender/30 to-cream">
       <div className="container-max px-6">
         <SectionLabel number="06" label="Contact" />
-        <h2 className="font-serif text-3xl font-bold text-charcoal md:text-5xl">
+        <h2 className="section-title">
           We&apos;re Here <span className="text-brand">For You</span>
         </h2>
-        <p className="mt-4 max-w-2xl text-charcoal/70">
+        <p className="section-lead max-w-2xl">
           Reach out any time. We&apos;re happy to answer your questions and schedule a visit.
         </p>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-2">
           <div className="space-y-5">
-            <div className="glass-card rounded-2xl p-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-brand">Your contact</p>
-              <p className="mt-1 font-serif text-2xl font-bold text-charcoal">{SITE.owner}</p>
+            <div className="glass-card rounded-2xl p-6 md:p-7">
+              <p className="label-gold">Your contact</p>
+              <p className="mt-2 font-serif text-2xl font-bold text-charcoal">{SITE.owner}</p>
             </div>
 
-            <div className="glass-card rounded-2xl p-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-brand">{primaryPhone.label}</p>
-              <p className="mt-1 font-serif text-3xl font-bold text-charcoal">{primaryPhone.number}</p>
+            <div className="glass-card rounded-2xl p-6 md:p-7">
+              <p className="label-gold">{primaryPhone.label}</p>
+              <p className="mt-2 font-serif text-3xl font-bold text-charcoal">{primaryPhone.number}</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <a href={tel(primaryPhone.number)} className="btn-primary">
                   Call now
@@ -152,7 +152,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="glass-card space-y-4 rounded-2xl p-6 text-sm text-charcoal/80">
+            <div className="glass-card space-y-4 rounded-2xl p-6 text-sm text-charcoal/80 md:p-7 md:text-base">
               {otherPhones.map((phone) => (
                 <p key={phone.number}>
                   <span className="font-semibold text-charcoal">{phone.label}:</span>{' '}
@@ -168,7 +168,7 @@ export default function Contact() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-3">
               <span className="rounded-full bg-brand/10 px-4 py-2 text-sm font-medium text-brand">
                 Private pay &amp; Medicaid accepted
               </span>
@@ -177,7 +177,7 @@ export default function Contact() {
               </span>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-brand/10 shadow-lg">
+            <div className="overflow-hidden rounded-2xl border border-gold/25 shadow-lg">
               <iframe
                 title="Luna Cottage location"
                 src="https://maps.google.com/maps?q=10524+23rd+Dr+SE,+Everett,+WA+98208&output=embed"
@@ -193,7 +193,7 @@ export default function Contact() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="glass-card rounded-3xl p-8"
+            className="glass-card rounded-3xl p-8 md:p-10"
           >
             {status === 'sent' ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -201,7 +201,7 @@ export default function Contact() {
                   ✓
                 </div>
                 <p className="font-serif text-xl font-bold text-charcoal">Message sent!</p>
-                <p className="mt-2 text-sm text-charcoal/70">
+                <p className="mt-3 text-base text-charcoal/70">
                   Thank you for reaching out. We&apos;ll reply to your email or phone soon.
                 </p>
               </div>
@@ -218,7 +218,7 @@ export default function Contact() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="contact-name" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
+                    <label htmlFor="contact-name" className="mb-2 block text-sm font-semibold text-plum/80">
                       Full name
                     </label>
                     <input
@@ -231,7 +231,7 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="contact-phone" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
+                    <label htmlFor="contact-phone" className="mb-2 block text-sm font-semibold text-plum/80">
                       Phone number
                     </label>
                     <input
@@ -246,7 +246,7 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <label htmlFor="contact-email" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-email" className="mb-2 mt-4 block text-sm font-semibold text-plum/80">
                   Email
                 </label>
                 <input
@@ -259,7 +259,7 @@ export default function Contact() {
                   className="form-input-light"
                 />
 
-                <label htmlFor="contact-role" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-role" className="mb-2 mt-4 block text-sm font-semibold text-plum/80">
                   I am a…
                 </label>
                 <select required id="contact-role" name="role" className="form-input-light" defaultValue="">
@@ -271,7 +271,7 @@ export default function Contact() {
                   <option>Other</option>
                 </select>
 
-                <label htmlFor="contact-message" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-message" className="mb-2 mt-4 block text-sm font-semibold text-plum/80">
                   Your message
                 </label>
                 <textarea
@@ -321,7 +321,7 @@ export default function Contact() {
                   </p>
                 )}
 
-                <p className="mt-3 text-center text-xs text-charcoal/55">
+                <p className="mt-4 text-center text-sm text-charcoal/55">
                   Prefer to talk now? Call or text{' '}
                   <a href={tel(primaryPhone.number)} className="font-semibold text-brand">
                     {primaryPhone.number}

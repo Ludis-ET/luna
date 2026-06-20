@@ -1,15 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  safelist: [
+    { pattern: /^(text|bg|border|ring|from|via|to|hover:text|hover:bg|hover:border)-(plum|gold|creamCard)(\/\d+)?$/ },
+    'text-body-lg',
+  ],
   theme: {
     extend: {
       colors: {
         brand:    '#7B2D9E',
+        plum:     '#2E1447',
+        gold:     '#C5A880',
         cream:    '#FAF6EE',
+        creamCard:'#FAF7F2',
         lavender: '#C8A8E9',
         charcoal: '#2D2D2D',
         glow:     '#FFB84D',
         magenta:  '#D10056',
+      },
+      fontSize: {
+        body: ['1rem', { lineHeight: '1.65' }],
+        'body-lg': ['1.0625rem', { lineHeight: '1.65' }],
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

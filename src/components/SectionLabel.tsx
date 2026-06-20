@@ -4,16 +4,16 @@ export default function SectionLabel({ number, label, light = false }: Props) {
   return (
     <div className="mb-6 flex items-center gap-3">
       <span
-        className={`font-sans text-xs font-bold tracking-[0.25em] ${
-          light ? 'text-glow' : 'text-brand'
+        className={`font-sans text-sm font-bold tracking-[0.22em] ${
+          light ? 'text-gold' : 'text-gold'
         }`}
       >
         {number}
       </span>
-      <span className={`h-px w-8 ${light ? 'bg-glow/50' : 'bg-brand/40'}`} />
+      <span className={`h-px w-10 ${light ? 'bg-gold/60' : 'bg-gold/50'}`} />
       <span
-        className={`font-sans text-xs font-semibold uppercase tracking-[0.2em] ${
-          light ? 'text-cream/70' : 'text-charcoal/50'
+        className={`font-sans text-sm font-semibold uppercase tracking-[0.18em] ${
+          light ? 'text-creamCard/75' : 'text-plum/60'
         }`}
       >
         {label}

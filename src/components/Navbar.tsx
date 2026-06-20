@@ -36,12 +36,14 @@ export default function Navbar() {
               document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })
             }}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand/20 bg-white/80 font-serif text-lg font-semibold text-brand transition group-hover:border-brand/40 group-hover:bg-white">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 bg-white/80 font-serif text-lg font-semibold text-brand transition group-hover:border-gold/60 group-hover:bg-white">
               L
             </span>
             <span className="hidden leading-tight sm:block">
               <span className="block font-serif text-sm font-semibold text-charcoal">Luna Cottage</span>
-              <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-charcoal/45">AFH</span>
+              <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-charcoal/45">
+                Adult Family Home
+              </span>
             </span>
           </a>
 
@@ -72,7 +74,7 @@ export default function Navbar() {
             })}
             <a
               href="#contact"
-              className="ml-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-cream transition hover:bg-brand/90"
+              className="btn-primary ml-2 px-5 py-2"
             >
               Book a tour
             </a>
@@ -132,7 +134,7 @@ export default function Navbar() {
               <a
                 href="#contact"
                 onClick={() => setMenuOpen(false)}
-                className="mt-4 rounded-full bg-brand px-4 py-3 text-center text-sm font-semibold text-cream"
+                className="btn-primary mt-4 justify-center"
               >
                 Book a tour
               </a>

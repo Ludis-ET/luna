@@ -23,9 +23,8 @@ export default function Services() {
         const items = card.querySelectorAll<HTMLElement>('[data-item]')
         gsap.fromTo(
           card,
-          { opacity: 0, y: 48 },
+          { y: 40 },
           {
-            opacity: 1,
             y: 0,
             scrollTrigger: {
               trigger: card,
@@ -37,9 +36,8 @@ export default function Services() {
         )
         gsap.fromTo(
           items,
-          { opacity: 0, x: -12 },
+          { x: -10 },
           {
-            opacity: 1,
             x: 0,
             stagger: 0.04,
             scrollTrigger: {
@@ -59,30 +57,37 @@ export default function Services() {
     <section id="services" ref={sectionRef} className="section-pad bg-cream">
       <div className="container-max px-6">
         <SectionLabel number="02" label="Services" />
-        <h2 className="font-serif text-3xl font-bold text-charcoal md:text-5xl">
+        <h2 className="section-title">
           Here&apos;s <span className="text-brand">what we do</span>
         </h2>
-        <p className="mt-4 max-w-3xl text-base leading-relaxed text-charcoal/70 md:text-lg">
-          {SERVICES_INTRO}
-        </p>
+        <p className="section-lead">{SERVICES_INTRO}</p>
 
         <div ref={cardsRef} className="mt-14 grid gap-8 md:grid-cols-2">
           {SERVICE_CATEGORIES.map((cat) => (
             <div
               key={cat.title}
               data-card
-              className="glass-card rounded-3xl p-7 md:p-8"
+              className="relative overflow-hidden rounded-2xl border border-[#c5a880]/30 bg-[#2e1447] p-6 shadow-[0_24px_60px_-20px_rgba(46,20,71,0.6)] md:p-7"
             >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-xl text-brand">
+              <div className="pointer-events-none absolute inset-2 rounded-xl border border-[#c5a880]/30" aria-hidden />
+
+              <div className="relative mb-5 flex items-center gap-3 border-b border-[#c5a880]/25 pb-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#c5a880] bg-white/5 font-serif text-lg font-bold text-[#c5a880]">
                   {cat.icon}
-                </div>
-                <h3 className="font-serif text-xl font-bold text-charcoal">{cat.title}</h3>
+                </span>
+                <h3 className="font-serif text-xl font-bold text-[#faf7f2]">{cat.title}</h3>
               </div>
-              <ul className="max-h-[420px] space-y-2.5 overflow-y-auto pr-1 md:max-h-none md:overflow-visible">
+
+              <ul className="relative max-h-[420px] space-y-2.5 overflow-y-auto pr-1 md:max-h-none md:overflow-visible">
                 {cat.items.map((item) => (
-                  <li key={item} data-item className="flex gap-2.5 text-sm leading-snug text-charcoal/75">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                  <li
+                    key={item}
+                    data-item
+                    className="relative pl-4 text-base leading-relaxed text-[#faf7f2]/90"
+                  >
+                    <span className="absolute left-0 top-2.5 text-[9px] text-[#c5a880]" aria-hidden
+                      ◆
+                    </span>
                     {item}
                   </li>
                 ))}
@@ -95,9 +100,9 @@ export default function Services() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-12 rounded-2xl border border-lavender/50 bg-lavender/20 p-8 text-center"
+          className="mt-12 rounded-2xl border border-lavender/50 bg-lavender/20 p-8 text-center md:p-10"
         >
-          <p className="font-serif text-lg italic text-charcoal/90">
+          <p className="font-serif text-lg italic text-charcoal/90 md:text-xl">
             Each resident receives a customized care plan, developed around their interests,
             preferences, and capabilities, then reviewed regularly and updated whenever needs change.
           </p>

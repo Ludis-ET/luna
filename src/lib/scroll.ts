@@ -10,6 +10,10 @@ export function unregisterLenis() {
   lenis = null
 }
 
+export function getScrollY() {
+  return lenis?.scroll ?? window.scrollY
+}
+
 export function scrollToY(top: number, immediate = true) {
   if (lenis) {
     lenis.scrollTo(top, { immediate })

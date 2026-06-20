@@ -81,10 +81,10 @@ export default function Brochure() {
     <section id="brochure" className="section-pad bg-gradient-to-b from-cream via-cream to-lavender/20">
       <div className="container-max px-6">
         <SectionLabel number="04" label="Resources" />
-        <h2 className="font-serif text-3xl font-bold text-charcoal md:text-5xl">
+        <h2 className="section-title">
           Take Luna Cottage <span className="text-brand">with you</span>
         </h2>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-charcoal/70 md:text-lg">
+        <p className="section-lead max-w-2xl">
           Browse our full brochure below, and save our card to your phone in a tap. Everything is
           ready to download, print, or share.
         </p>
@@ -98,19 +98,19 @@ export default function Brochure() {
             transition={{ duration: 0.7, ease: 'easeOut' }}
             className="lg:col-span-3"
           >
-            <div className="overflow-hidden rounded-3xl border border-brand/10 bg-white shadow-[0_30px_80px_-30px_rgba(123,45,158,0.4)]">
+            <div className="overflow-hidden rounded-3xl border border-gold/25 bg-white shadow-[0_30px_80px_-30px_rgba(46,20,71,0.35)]">
               {/* document chrome */}
-              <div className="flex items-center justify-between gap-3 border-b border-charcoal/10 bg-cream/80 px-5 py-3 backdrop-blur">
-                <div className="flex items-center gap-2 text-xs font-semibold text-charcoal/70">
-                  <span className="h-2.5 w-2.5 rounded-full bg-magenta/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-glow/80" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-brand/60" />
+              <div className="flex items-center justify-between gap-3 border-b border-gold/20 bg-cream/80 px-5 py-3 backdrop-blur">
+                <div className="flex items-center gap-2 text-sm font-semibold text-plum/70">
+                  <span className="h-2.5 w-2.5 rounded-full bg-gold/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-plum/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-gold/50" />
                   <span className="ml-2 hidden sm:inline">Luna Cottage Brochure</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => printDocument(BROCHURE.brochureUrl)}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-cream transition hover:bg-brand/90"
+                  className="btn-primary px-5 py-2 text-sm"
                 >
                   <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
                   Download
@@ -132,7 +132,7 @@ export default function Brochure() {
             transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
             className="lg:col-span-2 lg:sticky lg:top-28"
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-charcoal/45">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-plum/50">
               Tap the card to flip
             </p>
 
@@ -191,7 +191,7 @@ export default function Brochure() {
               <button
                 type="button"
                 onClick={() => setFlipped((v) => !v)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand/20 bg-white/70 px-4 py-3 text-sm font-semibold text-brand transition hover:bg-white"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 bg-white/70 px-5 py-3.5 text-base font-semibold text-plum transition hover:bg-white"
               >
                 <QuickIcon d="M4 4v5h5M20 20v-5h-5M5 9a7 7 0 0112-3M19 15a7 7 0 01-12 3" />
                 Flip card
@@ -199,7 +199,7 @@ export default function Brochure() {
               <button
                 type="button"
                 onClick={downloadVCard}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand/20 bg-white/70 px-4 py-3 text-sm font-semibold text-brand transition hover:bg-white"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 bg-white/70 px-5 py-3.5 text-base font-semibold text-plum transition hover:bg-white"
               >
                 <QuickIcon d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8zM19 8v6M22 11h-6" />
                 Save contact
@@ -207,7 +207,7 @@ export default function Brochure() {
               <button
                 type="button"
                 onClick={() => printDocument(BROCHURE.businessCardUrl)}
-                className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-cream shadow-brand transition hover:bg-brand/90"
+                className="col-span-2 btn-primary justify-center py-3.5"
               >
                 <QuickIcon d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
                 Download card

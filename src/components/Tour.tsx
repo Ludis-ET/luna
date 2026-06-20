@@ -24,9 +24,8 @@ export default function Tour() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         header,
-        { opacity: 0, y: mobile ? 24 : 40 },
+        { y: mobile ? 24 : 40 },
         {
-          opacity: 1,
           y: 0,
           ease: 'power2.out',
           scrollTrigger: {
@@ -40,9 +39,8 @@ export default function Tour() {
 
       gsap.fromTo(
         player,
-        { opacity: 0, y: mobile ? 32 : 100, scale: mobile ? 1 : 0.88 },
+        { y: mobile ? 32 : 100, scale: mobile ? 1 : 0.88 },
         {
-          opacity: 1,
           y: 0,
           scale: 1,
           ease: 'none',
@@ -68,10 +66,10 @@ export default function Tour() {
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
           <SectionLabel number="05" label="Virtual Tour" />
         </motion.div>
-        <h2 className="font-serif text-2xl font-semibold text-charcoal sm:text-3xl md:text-5xl">
+        <h2 className="section-title">
           Take a <span className="text-brand">virtual tour</span>
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-charcoal/65 sm:mt-4 sm:text-base md:text-lg">
+        <p className="section-lead mx-auto max-w-2xl">
           See the warmth and comfort of Luna Cottage for yourself.
         </p>
       </div>

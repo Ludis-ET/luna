@@ -45,7 +45,6 @@ export const SECTION_IDS = [
 export const TRUST_STATS = [
   { value: '6', label: 'Private Rooms' },
   { value: 'RN', label: 'Owned & Operated' },
-  { value: 'WA', label: 'South Everett' },
 ] as const
 
 export const ABOUT_PARAGRAPHS = [

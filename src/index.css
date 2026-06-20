@@ -13,6 +13,13 @@
 
   html {
     scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 17px;
+    }
   }
 
   body {
@@ -21,6 +28,7 @@
     color: #2d2d2d;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
   }
 
   ::-webkit-scrollbar {
@@ -46,12 +54,24 @@
     @apply px-4 py-24 md:py-28;
   }
 
+  .section-title {
+    @apply font-serif text-3xl font-bold text-charcoal md:text-4xl lg:text-[2.75rem];
+  }
+
+  .section-lead {
+    @apply mt-4 max-w-3xl text-base text-charcoal/75 md:text-lg;
+    line-height: 1.65;
+  }
+
   .glass {
-    @apply rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl;
+    @apply rounded-2xl bg-white/10 backdrop-blur-xl;
+    border: 1px solid rgb(197 168 128 / 0.2);
   }
 
   .glass-dark {
-    @apply rounded-2xl border border-white/10 bg-charcoal/80 backdrop-blur-xl;
+    @apply rounded-2xl backdrop-blur-xl;
+    border: 1px solid rgb(197 168 128 / 0.2);
+    background-color: rgb(46 20 71 / 0.9);
   }
 
   .glass-card {
@@ -72,6 +92,11 @@
 
   .form-input-light {
     @apply w-full rounded-xl border border-brand/15 bg-white/80 px-4 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/35 focus:border-brand focus:ring-2 focus:ring-brand/20;
+  }
+
+  .label-gold {
+    @apply text-sm font-bold uppercase tracking-[0.18em];
+    color: #c5a880;
   }
 
   .video-volume-slider {
