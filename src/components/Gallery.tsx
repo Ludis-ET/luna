@@ -1,24 +1,45 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { GALLERY_IMAGES, type GalleryTag } from '../data/media'
+import { scrollToY } from '../lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const FILTERS: Array<GalleryTag | 'All'> = ['All', 'Exterior', 'Living', 'Dining', 'Comfort']
 
+function getHorizontalScroll(strip: HTMLElement) {
+  return Math.max(strip.scrollWidth - window.innerWidth + 48, 0)
+}
+
+function isScrolledIntoGallery(section: HTMLElement) {
+  const scrollY = window.scrollY
+  const top = section.offsetTop
+  const bottom = top + section.offsetHeight
+  return scrollY >= top - 120 && scrollY < bottom - 120
+}
+
 export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
   const stripRef = useRef<HTMLDivElement>(null)
+  const skipFilterAnchor = useRef(true)
   const [filter, setFilter] = useState<GalleryTag | 'All'>('All')
   const [lightbox, setLightbox] = useState<(typeof GALLERY_IMAGES)[number] | null>(null)
 
   const filtered =
     filter === 'All' ? GALLERY_IMAGES : GALLERY_IMAGES.filter((img) => img.tag === filter)
 
+  const handleFilterChange = useCallback((next: GalleryTag | 'All') => {
+    if (next === filter) return
+    const strip = stripRef.current
+    if (strip) gsap.set(strip, { x: 0 })
+    setFilter(next)
+  }, [filter])
+
+  // Create the horizontal pin scroll once; width recalculates on refresh.
   useLayoutEffect(() => {
     const section = sectionRef.current
     const pin = pinRef.current
@@ -26,23 +47,51 @@ export default function Gallery() {
     if (!section || !pin || !strip) return
 
     const ctx = gsap.context(() => {
-      const getScroll = () => Math.max(strip.scrollWidth - window.innerWidth + 48, 0)
-
       gsap.to(strip, {
-        x: () => -getScroll(),
+        x: () => -getHorizontalScroll(strip),
         ease: 'none',
         scrollTrigger: {
+          id: 'gallery-horizontal',
           trigger: section,
           start: 'top top',
-          end: () => `+=${getScroll() + window.innerHeight * 0.5}`,
+          end: () => `+=${getHorizontalScroll(strip) + window.innerHeight * 0.5}`,
           pin: pin,
           scrub: 1,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       })
     }, section)
 
     return () => ctx.revert()
+  }, [])
+
+  // When the filter changes, reset the strip and re-anchor scroll inside the gallery.
+  useLayoutEffect(() => {
+    if (skipFilterAnchor.current) {
+      skipFilterAnchor.current = false
+      return
+    }
+
+    const section = sectionRef.current
+    const strip = stripRef.current
+    if (!section || !strip) return
+
+    gsap.set(strip, { x: 0 })
+
+    const wasInGallery = isScrolledIntoGallery(section)
+    const sectionTop = section.offsetTop
+
+    const frame = requestAnimationFrame(() => {
+      ScrollTrigger.refresh(true)
+
+      if (wasInGallery) {
+        scrollToY(sectionTop, true)
+        requestAnimationFrame(() => ScrollTrigger.refresh(true))
+      }
+    })
+
+    return () => cancelAnimationFrame(frame)
   }, [filter])
 
   return (
@@ -63,7 +112,7 @@ export default function Gallery() {
               <button
                 key={f}
                 type="button"
-                onClick={() => setFilter(f)}
+                onClick={() => handleFilterChange(f)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                   filter === f
                     ? 'bg-brand text-cream shadow-glow'

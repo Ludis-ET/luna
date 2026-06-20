@@ -16,15 +16,12 @@ export const SITE = {
   website: 'www.lunacottageafh.com',
   // TODO: add your WA DSHS Adult Family Home license number for a strong trust signal.
   license: '', // e.g. 'License #XXXXXX'
-  // Web3Forms access key for the contact form. Create a FREE key at https://web3forms.com
-  // for the inbox that should receive inquiries (Emunetluna@gmail.com). It is tied to
-  // that email and is safe to commit. Until set, the form shows a graceful fallback
-  // telling visitors to call/text instead.
-  formAccessKey: '', // TODO: paste Web3Forms access key here
-  // Google reCAPTCHA v2 ("I'm not a robot") site key. Create one for your domain at
-  // https://www.google.com/recaptcha/admin and enable reCAPTCHA in your Web3Forms
-  // dashboard. Leave blank to hide the captcha (the form still works without it).
-  recaptchaSiteKey: '', // TODO: paste reCAPTCHA v2 site key here
+  // EmailJS sends the branded HTML inquiry email (see .env.example for setup).
+  emailjsServiceId: import.meta.env.VITE_EMAILJS_SERVICE_ID ?? '',
+  emailjsTemplateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? '',
+  emailjsPublicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? '',
+  // Optional Google reCAPTCHA v3 site key — verified client-side before send.
+  recaptchaSiteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY ?? '',
 } as const
 
 export const NAV_LINKS = [

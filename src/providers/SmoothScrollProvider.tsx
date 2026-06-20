@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { registerLenis, unregisterLenis } from '../lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -19,6 +20,7 @@ export default function SmoothScrollProvider({ children }: Props) {
       wheelMultiplier: 1.1,
     })
 
+    registerLenis(lenis)
     lenis.on('scroll', ScrollTrigger.update)
 
     const tick = (time: number) => lenis.raf(time * 1000)
@@ -27,6 +29,7 @@ export default function SmoothScrollProvider({ children }: Props) {
 
     return () => {
       gsap.ticker.remove(tick)
+      unregisterLenis()
       lenis.destroy()
     }
   }, [])

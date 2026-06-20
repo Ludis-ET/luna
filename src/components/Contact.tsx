@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import emailjs from '@emailjs/browser'
 import { motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { SITE } from '../data/content'
+import { buildInquiryEmailHtml, buildInquirySubject } from '../lib/inquiryEmail'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -11,22 +13,41 @@ const sms = (number: string) => `sms:${number.replace(/[^\d+]/g, '')}`
 const primaryPhone = SITE.phones.find((p) => p.primary) ?? SITE.phones[0]
 const otherPhones = SITE.phones.filter((p) => p !== primaryPhone)
 
+const hasFormService =
+  SITE.emailjsServiceId.length > 0 &&
+  SITE.emailjsTemplateId.length > 0 &&
+  SITE.emailjsPublicKey.length > 0
+
+async function getRecaptchaToken(siteKey: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!window.grecaptcha) {
+      reject(new Error('reCAPTCHA failed to load. Please refresh and try again.'))
+      return
+    }
+    window.grecaptcha.ready(() => {
+      window.grecaptcha!
+        .execute(siteKey, { action: 'contact' })
+        .then(resolve)
+        .catch(() => reject(new Error('reCAPTCHA verification failed. Please try again.')))
+    })
+  })
+}
+
 export default function Contact() {
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
-  const hasFormService = SITE.formAccessKey.length > 0
   const hasRecaptcha = SITE.recaptchaSiteKey.length > 0
 
-  // Load the reCAPTCHA script once, only if a site key is configured.
   useEffect(() => {
     if (!hasRecaptcha) return
-    if (document.querySelector('script[data-recaptcha]')) return
+    if (document.querySelector('script[data-recaptcha-v3]')) return
+
     const script = document.createElement('script')
-    script.src = 'https://www.google.com/recaptcha/api.js'
+    script.src = `https://www.google.com/recaptcha/api.js?render=${SITE.recaptchaSiteKey}`
     script.async = true
     script.defer = true
-    script.setAttribute('data-recaptcha', 'true')
+    script.setAttribute('data-recaptcha-v3', 'true')
     document.head.appendChild(script)
   }, [hasRecaptcha])
 
@@ -37,7 +58,6 @@ export default function Contact() {
     const form = e.currentTarget
     const data = new FormData(form)
 
-    // Honeypot: bots fill hidden fields; humans don't.
     if (data.get('botcheck')) return
 
     if (!hasFormService) {
@@ -46,49 +66,54 @@ export default function Contact() {
       return
     }
 
-    // Require the captcha to be solved before sending.
-    if (hasRecaptcha) {
-      const token = window.grecaptcha?.getResponse() ?? ''
-      if (!token) {
-        setErrorMsg('Please confirm you are not a robot before sending.')
-        setStatus('error')
-        return
-      }
-    }
-
     setStatus('sending')
-
-    // Build a rich, readable email: include who, what, and useful context.
-    const now = new Date()
-    const submittedAt = now.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'long' })
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-    data.append('access_key', SITE.formAccessKey)
-    data.append('subject', `New website inquiry from ${data.get('name') || 'a visitor'}`)
-    data.append('from_name', 'Luna Cottage Website')
-    if (data.get('email')) data.append('replyto', String(data.get('email')))
-    data.append('Submitted', `${submittedAt} (${timeZone})`)
-    data.append('Page', window.location.href)
-    data.append('Referrer', document.referrer || 'Direct visit')
-    data.append('Language', navigator.language)
-    data.append('Device', navigator.userAgent)
+    setErrorMsg('')
 
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: data,
-      })
-      const json = await res.json()
-      if (json.success) {
-        setStatus('sent')
-        form.reset()
-        window.grecaptcha?.reset()
-      } else {
-        setErrorMsg(fallbackMessage)
-        setStatus('error')
+      if (hasRecaptcha) {
+        await getRecaptchaToken(SITE.recaptchaSiteKey)
       }
-    } catch {
-      setErrorMsg(fallbackMessage)
+
+      const fullName = String(data.get('fullName') || '').trim()
+      const phone = String(data.get('phone') || '').trim()
+      const email = String(data.get('email') || '').trim()
+      const role = String(data.get('role') || '').trim()
+      const message = String(data.get('message') || '').trim()
+
+      const now = new Date()
+      const submittedAt = now.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'long' })
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+      const payload = {
+        fullName,
+        phone,
+        email,
+        role,
+        message,
+        submittedAt: `${submittedAt} (${timeZone})`,
+        pageUrl: window.location.href,
+        referrer: document.referrer || 'Direct visit',
+        language: navigator.language,
+      }
+
+      await emailjs.send(
+        SITE.emailjsServiceId,
+        SITE.emailjsTemplateId,
+        {
+          to_email: SITE.email,
+          reply_to: email,
+          subject: buildInquirySubject(fullName),
+          html_message: buildInquiryEmailHtml(payload),
+        },
+        { publicKey: SITE.emailjsPublicKey },
+      )
+
+      setStatus('sent')
+      form.reset()
+    } catch (err) {
+      const emailJsError =
+        err && typeof err === 'object' && 'text' in err ? String((err as { text: string }).text) : ''
+      setErrorMsg(emailJsError || (err instanceof Error ? err.message : fallbackMessage))
       setStatus('error')
     }
   }
@@ -106,14 +131,12 @@ export default function Contact() {
 
         <div className="mt-12 grid gap-12 lg:grid-cols-2">
           <div className="space-y-5">
-            {/* Owner */}
             <div className="glass-card rounded-2xl p-6">
               <p className="text-xs font-bold uppercase tracking-widest text-brand">Your contact</p>
               <p className="mt-1 font-serif text-2xl font-bold text-charcoal">{SITE.owner}</p>
               <p className="text-sm text-charcoal/70">Owner &amp; Registered Nurse</p>
             </div>
 
-            {/* Primary number: call or text */}
             <div className="glass-card rounded-2xl p-6">
               <p className="text-xs font-bold uppercase tracking-widest text-brand">{primaryPhone.label}</p>
               <p className="mt-1 font-serif text-3xl font-bold text-charcoal">{primaryPhone.number}</p>
@@ -130,7 +153,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Office + email + address */}
             <div className="glass-card space-y-4 rounded-2xl p-6 text-sm text-charcoal/80">
               {otherPhones.map((phone) => (
                 <p key={phone.number}>
@@ -147,7 +169,6 @@ export default function Contact() {
               </p>
             </div>
 
-            {/* Badges */}
             <div className="flex flex-wrap gap-2.5">
               <span className="rounded-full bg-brand/10 px-4 py-2 text-sm font-medium text-brand">
                 Private pay &amp; Medicaid accepted
@@ -181,13 +202,14 @@ export default function Contact() {
                   ✓
                 </div>
                 <p className="font-serif text-xl font-bold text-charcoal">Message sent!</p>
-                <p className="mt-2 text-sm text-charcoal/70">We&apos;ll be in touch soon.</p>
+                <p className="mt-2 text-sm text-charcoal/70">
+                  Thank you for reaching out. We&apos;ll reply to your email or phone soon.
+                </p>
               </div>
             ) : (
               <>
-                {/* Honeypot anti-spam field: hidden from real users */}
                 <input
-                  type="text"
+                  type="checkbox"
                   name="botcheck"
                   tabIndex={-1}
                   autoComplete="off"
@@ -197,49 +219,70 @@ export default function Contact() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="name" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
+                    <label htmlFor="contact-name" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
                       Full name
                     </label>
-                    <input required id="name" name="name" autoComplete="name" placeholder="Jane Doe" className="form-input-light" />
+                    <input
+                      required
+                      id="contact-name"
+                      name="fullName"
+                      autoComplete="name"
+                      placeholder="Jane Doe"
+                      className="form-input-light"
+                    />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
+                    <label htmlFor="contact-phone" className="mb-1.5 block text-xs font-semibold text-charcoal/80">
                       Phone number
                     </label>
-                    <input required id="phone" name="phone" type="tel" autoComplete="tel" placeholder="(206) 555-0123" className="form-input-light" />
+                    <input
+                      required
+                      id="contact-phone"
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="(206) 555-0123"
+                      className="form-input-light"
+                    />
                   </div>
                 </div>
 
-                <label htmlFor="email" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-email" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
                   Email
                 </label>
-                <input required id="email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className="form-input-light" />
+                <input
+                  required
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  className="form-input-light"
+                />
 
-                <label htmlFor="role" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-role" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
                   I am a…
                 </label>
-                <select required id="role" name="role" className="form-input-light" defaultValue="">
-                  <option value="" disabled>Select one</option>
+                <select required id="contact-role" name="role" className="form-input-light" defaultValue="">
+                  <option value="" disabled>
+                    Select one
+                  </option>
                   <option>Family Member</option>
                   <option>Healthcare Professional</option>
                   <option>Other</option>
                 </select>
 
-                <label htmlFor="message" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
+                <label htmlFor="contact-message" className="mb-1.5 mt-4 block text-xs font-semibold text-charcoal/80">
                   Your message
                 </label>
                 <textarea
                   required
-                  id="message"
+                  id="contact-message"
                   name="message"
                   rows={5}
                   placeholder="Tell us a little about your situation and how we can help."
                   className="form-input-light resize-none"
                 />
-
-                {hasRecaptcha && (
-                  <div className="g-recaptcha mt-4" data-sitekey={SITE.recaptchaSiteKey} />
-                )}
 
                 {status === 'error' && (
                   <p className="mt-4 rounded-lg bg-magenta/10 px-4 py-3 text-sm text-magenta" role="alert">
@@ -254,6 +297,30 @@ export default function Contact() {
                 >
                   {status === 'sending' ? 'Sending…' : 'Send Message'}
                 </button>
+
+                {hasRecaptcha && (
+                  <p className="mt-3 text-center text-[11px] leading-relaxed text-charcoal/45">
+                    Protected by reCAPTCHA. Google{' '}
+                    <a
+                      href="https://policies.google.com/privacy"
+                      className="underline hover:text-charcoal/70"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Privacy Policy
+                    </a>{' '}
+                    and{' '}
+                    <a
+                      href="https://policies.google.com/terms"
+                      className="underline hover:text-charcoal/70"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Terms of Service
+                    </a>{' '}
+                    apply.
+                  </p>
+                )}
 
                 <p className="mt-3 text-center text-xs text-charcoal/55">
                   Prefer to talk now? Call or text{' '}
