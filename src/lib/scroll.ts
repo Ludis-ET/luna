@@ -1,13 +1,30 @@
 import type Lenis from 'lenis'
 
 let lenis: Lenis | null = null
+const lenisReadyListeners = new Set<() => void>()
 
 export function registerLenis(instance: Lenis) {
   lenis = instance
+  lenisReadyListeners.forEach((listener) => listener())
+  lenisReadyListeners.clear()
 }
 
 export function unregisterLenis() {
   lenis = null
+}
+
+export function isLenisReady() {
+  return lenis !== null
+}
+
+/** Run after Lenis + ScrollTrigger scrollerProxy are configured. */
+export function onLenisReady(listener: () => void) {
+  if (lenis) {
+    listener()
+    return () => {}
+  }
+  lenisReadyListeners.add(listener)
+  return () => lenisReadyListeners.delete(listener)
 }
 
 export function getScrollY() {

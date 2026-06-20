@@ -116,6 +116,15 @@
     background-size: 24px 24px;
     animation: dotDrift 20s linear infinite;
   }
+
+  #gallery {
+    isolation: isolate;
+  }
+
+  #gallery .pin-spacer {
+    display: block !important;
+    background: #2d2d2d;
+  }
 }
 
 @layer utilities {

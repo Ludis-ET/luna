@@ -1,324 +1,187 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { GALLERY_IMAGES, type GalleryTag } from '../data/media'
-import { getScrollY, scrollByY, scrollToY } from '../lib/scroll'
 
-gsap.registerPlugin(ScrollTrigger)
+type Filter = GalleryTag | 'All'
 
-const FILTERS: Array<GalleryTag | 'All'> = ['All', 'Exterior', 'Living', 'Dining', 'Comfort']
-
-function getHorizontalScroll(strip: HTMLElement) {
-  return Math.max(strip.scrollWidth - window.innerWidth + 48, 0)
-}
-
-function isScrolledIntoGallery(section: HTMLElement) {
-  const scrollY = getScrollY()
-  const top = section.offsetTop
-  const bottom = top + section.offsetHeight
-  return scrollY >= top - 120 && scrollY < bottom - 120
-}
-
-function galleryScrollRange(st: ScrollTrigger) {
-  return (st.end as number) - (st.start as number)
-}
-
-function horizontalDeltaToScroll(delta: number, maxX: number, st: ScrollTrigger) {
-  if (maxX <= 0) return 0
-  return -(delta / maxX) * galleryScrollRange(st)
-}
-
-function waitForStripImages(strip: HTMLElement) {
-  const imgs = Array.from(strip.querySelectorAll('img'))
-  if (imgs.length === 0) return Promise.resolve()
-
-  return Promise.all(
-    imgs.map(
-      (img) =>
-        new Promise<void>((resolve) => {
-          if (img.complete) resolve()
-          else {
-            img.addEventListener('load', () => resolve(), { once: true })
-            img.addEventListener('error', () => resolve(), { once: true })
-          }
-        }),
-    ),
-  )
-}
+// Build the filter list from the data so a tab only ever appears when it has photos.
+const FILTERS: Filter[] = [
+  'All',
+  ...Array.from(new Set(GALLERY_IMAGES.map((img) => img.tag))),
+]
 
 export default function Gallery() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const stripRef = useRef<HTMLDivElement>(null)
-  const skipFilterAnchor = useRef(true)
-  const dragRef = useRef<{ active: boolean; startX: number; startScroll: number; moved: boolean }>({
-    active: false,
-    startX: 0,
-    startScroll: 0,
-    moved: false,
-  })
-  const [filter, setFilter] = useState<GalleryTag | 'All'>('All')
-  const [lightbox, setLightbox] = useState<(typeof GALLERY_IMAGES)[number] | null>(null)
-  const [dragging, setDragging] = useState(false)
+  const [filter, setFilter] = useState<Filter>('All')
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
-  const filtered =
-    filter === 'All' ? GALLERY_IMAGES : GALLERY_IMAGES.filter((img) => img.tag === filter)
+  const filtered = useMemo(
+    () => (filter === 'All' ? GALLERY_IMAGES : GALLERY_IMAGES.filter((img) => img.tag === filter)),
+    [filter],
+  )
 
-  const handleFilterChange = useCallback((next: GalleryTag | 'All') => {
-    if (next === filter) return
-    const strip = stripRef.current
-    if (strip) gsap.set(strip, { x: 0 })
-    setFilter(next)
-  }, [filter])
+  const closeLightbox = useCallback(() => setLightboxIndex(null), [])
+  const showPrev = useCallback(
+    () => setLightboxIndex((i) => (i === null ? i : (i - 1 + filtered.length) % filtered.length)),
+    [filtered.length],
+  )
+  const showNext = useCallback(
+    () => setLightboxIndex((i) => (i === null ? i : (i + 1) % filtered.length)),
+    [filtered.length],
+  )
 
-  // Vertical scroll pins the section and drives horizontal movement.
-  useLayoutEffect(() => {
-    const section = sectionRef.current
-    const strip = stripRef.current
-    if (!section || !strip) return
+  // Changing the filter invalidates the lightbox index, so close it.
+  useEffect(() => setLightboxIndex(null), [filter])
 
-    let cancelled = false
-    let ctx: gsap.Context | null = null
-
-    const scrollLength = () => getHorizontalScroll(strip) + window.innerHeight * 0.5
-
-    const setup = () => {
-      if (cancelled) return
-      ctx?.revert()
-
-      ctx = gsap.context(() => {
-        gsap.timeline({
-          scrollTrigger: {
-            id: 'gallery-horizontal',
-            trigger: section,
-            start: 'top top',
-            end: () => `+=${scrollLength()}`,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 0,
-            scrub: 0.5,
-            invalidateOnRefresh: true,
-          },
-        }).to(strip, {
-          x: () => -getHorizontalScroll(strip),
-          ease: 'none',
-        })
-      }, section)
-
-      ScrollTrigger.refresh()
-    }
-
-    void waitForStripImages(strip).then(setup)
-
-    const onResize = () => ScrollTrigger.refresh()
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      cancelled = true
-      window.removeEventListener('resize', onResize)
-      ctx?.revert()
-    }
-  }, [filtered])
-
-  // When the filter changes, reset the strip and re-anchor scroll inside the gallery.
-  useLayoutEffect(() => {
-    if (skipFilterAnchor.current) {
-      skipFilterAnchor.current = false
-      return
-    }
-
-    const section = sectionRef.current
-    const strip = stripRef.current
-    if (!section || !strip) return
-
-    gsap.set(strip, { x: 0 })
-
-    const wasInGallery = isScrolledIntoGallery(section)
-    const sectionTop = section.offsetTop
-
-    const frame = requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true)
-
-      if (wasInGallery) {
-        scrollToY(sectionTop, true)
-        requestAnimationFrame(() => ScrollTrigger.refresh(true))
-      }
-    })
-
-    return () => cancelAnimationFrame(frame)
-  }, [filter])
-
-  // Horizontal wheel / trackpad swipe also advances the gallery while pinned.
+  // Keyboard controls + scroll lock while the lightbox is open.
   useEffect(() => {
-    const onWheel = (e: WheelEvent) => {
-      const st = ScrollTrigger.getById('gallery-horizontal')
-      if (!st?.isActive) return
-
-      const strip = stripRef.current
-      if (!strip) return
-
-      const maxX = getHorizontalScroll(strip)
-      if (maxX <= 0) return
-
-      let delta = 0
-      if (e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        delta = e.deltaY
-      } else if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        delta = e.deltaX
-      } else {
-        return
-      }
-
-      e.preventDefault()
-      scrollByY(horizontalDeltaToScroll(delta, maxX, st), true)
+    if (lightboxIndex === null) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowLeft') showPrev()
+      if (e.key === 'ArrowRight') showNext()
     }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => window.removeEventListener('wheel', onWheel)
-  }, [])
-
-  const onStripPointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === 'mouse' && e.button !== 0) return
-
-    const st = ScrollTrigger.getById('gallery-horizontal')
-    if (!st?.isActive) return
-
-    dragRef.current = {
-      active: true,
-      startX: e.clientX,
-      startScroll: st.scroll(),
-      moved: false,
+    window.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
     }
-    setDragging(true)
-    e.currentTarget.setPointerCapture(e.pointerId)
-  }, [])
+  }, [lightboxIndex, closeLightbox, showPrev, showNext])
 
-  const onStripPointerMove = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active) return
-
-    const st = ScrollTrigger.getById('gallery-horizontal')
-    const strip = stripRef.current
-    if (!st || !strip) return
-
-    const dx = e.clientX - dragRef.current.startX
-    if (Math.abs(dx) > 4) dragRef.current.moved = true
-
-    const maxX = getHorizontalScroll(strip)
-    const nextScroll = dragRef.current.startScroll + horizontalDeltaToScroll(dx, maxX, st)
-    scrollToY(nextScroll, true)
-  }, [])
-
-  const endStripDrag = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active) return
-    dragRef.current.active = false
-    setDragging(false)
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId)
-    }
-  }, [])
+  const active = lightboxIndex === null ? null : filtered[lightboxIndex]
 
   return (
-    <section
-      id="gallery"
-      ref={sectionRef}
-      className="relative min-h-[100svh] bg-charcoal"
-    >
-      <div className="flex min-h-[100svh] w-full flex-col justify-center py-16 sm:py-24">
-        <div className="container-max mb-6 px-4 sm:mb-8 sm:px-6">
-          <SectionLabel number="03" label="Gallery" light />
-          <h2 className="font-serif text-3xl font-bold text-cream md:text-5xl">
-            Experience the Home
-          </h2>
-          <p className="mt-3 max-w-2xl text-base text-cream/65 sm:text-lg">
-            Scroll through Luna Cottage, from a warm welcome at the door to private bedrooms,
-            accessible baths, sunny patio gatherings, and peaceful evenings.
-          </p>
+    <section id="gallery" className="section-pad bg-charcoal">
+      <div className="container-max px-6">
+        <SectionLabel number="03" label="Gallery" light />
+        <h2 className="font-serif text-3xl font-bold text-cream md:text-5xl">Experience the Home</h2>
+        <p className="mt-3 max-w-2xl text-base text-cream/70 sm:text-lg">
+          Explore Luna Cottage, from a warm welcome at the door to private bedrooms, accessible
+          baths, sunny patio gatherings, and peaceful evenings.
+        </p>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => handleFilterChange(f)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
-                  filter === f
-                    ? 'bg-brand text-cream shadow-glow'
-                    : 'bg-white/10 text-cream/70 hover:bg-white/15'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div
-          ref={stripRef}
-          className={`flex touch-pan-y gap-4 px-4 sm:gap-6 sm:px-6 ${dragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
-          onPointerDown={onStripPointerDown}
-          onPointerMove={onStripPointerMove}
-          onPointerUp={endStripDrag}
-          onPointerCancel={endStripDrag}
-        >
-          {filtered.map((img, i) => (
-            <motion.button
-              key={img.src}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
               type="button"
-              whileHover={{ scale: dragging ? 1 : 1.03 }}
-              onClick={() => {
-                if (dragRef.current.moved) {
-                  dragRef.current.moved = false
-                  return
-                }
-                setLightbox(img)
-              }}
-              className="group relative h-[50vh] w-[85vw] max-w-md shrink-0 overflow-hidden rounded-2xl ring-2 ring-transparent transition hover:ring-glow/50 sm:h-[55vh] sm:w-[80vw] sm:rounded-3xl md:w-[45vw]"
+              onClick={() => setFilter(f)}
+              aria-pressed={filter === f}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                filter === f
+                  ? 'bg-brand text-cream shadow-glow'
+                  : 'bg-white/10 text-cream/70 hover:bg-white/15'
+              }`}
             >
-              <img
-                src={img.src}
-                alt={img.alt}
-                width={640}
-                height={480}
-                className="h-full w-full object-cover"
-                loading={i < 3 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-left sm:p-6">
-                <p className="font-serif text-lg font-semibold text-cream sm:text-xl md:text-2xl">{img.title}</p>
-                <p className="mt-1 line-clamp-2 text-xs text-cream/75 sm:text-sm">{img.caption}</p>
-              </div>
-            </motion.button>
+              {f}
+            </button>
           ))}
         </div>
+
+        {/* Responsive grid: reflows smoothly for any number of photos */}
+        <motion.div
+          layout
+          className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((img, i) => (
+              <motion.button
+                key={img.src}
+                layout
+                type="button"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                onClick={() => setLightboxIndex(i)}
+                className="group relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-white/10 transition hover:ring-glow/50"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4 text-left">
+                  <p className="font-serif text-lg font-semibold text-cream">{img.title}</p>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-cream/75 sm:text-sm">{img.caption}</p>
+                </div>
+                <span className="absolute right-3 top-3 rounded-full bg-charcoal/50 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-cream/80 opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+                  {img.tag}
+                </span>
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
+      {/* Lightbox */}
       <AnimatePresence>
-        {lightbox && (
+        {active && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/95 p-4 backdrop-blur-md sm:p-6"
-            onClick={() => setLightbox(null)}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-charcoal/95 p-4 backdrop-blur-md sm:p-8"
+            onClick={closeLightbox}
           >
-            <motion.img
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              src={lightbox.src}
-              alt={lightbox.alt}
-              className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            />
             <button
               type="button"
-              onClick={() => setLightbox(null)}
-              className="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-cream hover:bg-white/20 sm:right-6 sm:top-6"
+              onClick={closeLightbox}
+              aria-label="Close"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-cream transition hover:bg-white/20 sm:right-6 sm:top-6"
             >
-              Close
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+              </svg>
             </button>
+
+            {filtered.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); showPrev() }}
+                aria-label="Previous photo"
+                className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-cream transition hover:bg-white/20 sm:left-6"
+              >
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
+                </svg>
+              </button>
+            )}
+            {filtered.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); showNext() }}
+                aria-label="Next photo"
+                className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-cream transition hover:bg-white/20 sm:right-6"
+              >
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+            )}
+
+            <motion.img
+              key={active.src}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.25 }}
+              src={active.src}
+              alt={active.alt}
+              className="max-h-[78vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="mt-4 max-w-xl text-center" onClick={(e) => e.stopPropagation()}>
+              <p className="font-serif text-lg font-semibold text-cream">{active.title}</p>
+              <p className="mt-1 text-sm text-cream/70">{active.caption}</p>
+              <p className="mt-2 text-xs text-cream/40">
+                {(lightboxIndex ?? 0) + 1} / {filtered.length}
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
