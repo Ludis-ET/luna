@@ -28,11 +28,31 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
    - **Log in**: your FTP username (often `cpaneluser@yourdomain.com` or just `cpaneluser`).
    - **Password**: set or reset the password and save it somewhere secure.
    - **Directory**: for the main site, set this to `public_html` (or leave the default that points there).
-4. Note your **FTP server hostname**. Common values:
-   - `ftp.yourdomain.com`
-   - Your server hostname from cPanel (e.g. `server123.hostingprovider.com`)
+4. Copy the **FTP Server** value shown on that page (not your website URL unless they are the same).
 
-Do **not** include `ftp://` or `https://` in the hostname—only the host name.
+   In cPanel it often looks like one of these:
+
+   | What you see in cPanel | Put in `CPANEL_HOST` |
+   |------------------------|----------------------|
+   | `ftp.yourdomain.com` | `ftp.yourdomain.com` |
+   | `server123.hostingprovider.com` | `server123.hostingprovider.com` |
+   | `123.45.67.89` | `123.45.67.89` |
+
+   **Common mistakes that cause `getaddrinfo ENOTFOUND`:**
+
+   - Using `https://yourdomain.com` or `www.yourdomain.com` when cPanel lists a different FTP server
+   - Including a prefix: `ftp://ftp.yourdomain.com` (remove `ftp://`)
+   - Trailing slash or path: `ftp.yourdomain.com/public_html`
+   - Extra spaces before or after the hostname
+   - Typo in the domain or server name
+
+   **Quick check:** On your PC, open Command Prompt or PowerShell and run:
+
+   ```powershell
+   nslookup ftp.yourdomain.com
+   ```
+
+   If that fails, the hostname is wrong—use the exact **FTP Server** from cPanel or ask your hosting provider.
 
 ---
 
@@ -122,7 +142,7 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 | Problem | What to try |
 |---------|-------------|
 | `Login authentication failed` | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret. |
-| `getaddrinfo ENOTFOUND` | `CPANEL_HOST` is wrong. Use the exact hostname from cPanel FTP Accounts. |
+| `getaddrinfo ENOTFOUND` | `CPANEL_HOST` does not exist in DNS. Open **cPanel → FTP Accounts** and copy **FTP Server** exactly. Try `nslookup` on your PC. Use the server hostname (e.g. `server123.host.com`) if `ftp.yourdomain.com` does not resolve. Update the secret and re-run the workflow. |
 | Connection timeout | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port. |
 | Site is blank or 404 | Wrong `server-dir`; ensure it matches the domain’s document root in cPanel. |
 | Old files still showing | Clear browser cache or cPanel cache (e.g. LiteSpeed Cache). |

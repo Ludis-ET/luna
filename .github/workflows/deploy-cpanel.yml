@@ -36,10 +36,29 @@ jobs:
           VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
           VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
 
+      - name: Validate FTP host
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+        run: |
+          HOST=$(echo "$CPANEL_HOST" | sed -E 's|^[Ff][Tt][Pp][Ss]*://||; s|/.*||; s/[[:space:]]//g')
+          if [ -z "$HOST" ]; then
+            echo "::error::CPANEL_HOST secret is empty. Add the FTP server from cPanel → FTP Accounts."
+            exit 1
+          fi
+          echo "Resolved FTP host to check: $HOST"
+          if ! getent hosts "$HOST" > /dev/null; then
+            echo "::error::Cannot resolve CPANEL_HOST ($HOST)."
+            echo "Use the exact FTP Server shown in cPanel → FTP Accounts."
+            echo "Valid examples: ftp.yourdomain.com or server123.yourhost.com"
+            echo "Do not use: ftp:// prefix, https://, paths, or your website URL unless cPanel lists it as the FTP server."
+            exit 1
+          fi
+          echo "FTP_HOST=$HOST" >> "$GITHUB_ENV"
+
       - name: Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
-          server: ${{ secrets.CPANEL_HOST }}
+          server: ${{ env.FTP_HOST }}
           username: ${{ secrets.CPANEL_USERNAME }}
           password: ${{ secrets.CPANEL_PASSWORD }}
           protocol: ftps
