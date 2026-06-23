@@ -23,7 +23,7 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
 ## Step 1: Find your cPanel FTP credentials
 
 1. Log in to **cPanel**.
-2. Open **FTP Accounts** (under *Files*).
+2. Open **FTP Accounts** (under _Files_).
 3. Use an existing FTP account or create one:
    - **Log in**: your FTP username (often `cpaneluser@yourdomain.com` or just `cpaneluser`).
    - **Password**: set or reset the password and save it somewhere secure.
@@ -32,14 +32,13 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
 
    In cPanel it often looks like one of these:
 
-   | What you see in cPanel | Put in `CPANEL_HOST` |
-   |------------------------|----------------------|
-   | `ftp.yourdomain.com` | `ftp.yourdomain.com` |
+   | What you see in cPanel          | Put in `CPANEL_HOST`            |
+   | ------------------------------- | ------------------------------- |
+   | `ftp.yourdomain.com`            | `ftp.yourdomain.com`            |
    | `server123.hostingprovider.com` | `server123.hostingprovider.com` |
-   | `123.45.67.89` | `123.45.67.89` |
+   | `123.45.67.89`                  | `123.45.67.89`                  |
 
    **Common mistakes that cause `getaddrinfo ENOTFOUND`:**
-
    - Using `https://yourdomain.com` or `www.yourdomain.com` when cPanel lists a different FTP server
    - Including a prefix: `ftp://ftp.yourdomain.com` (remove `ftp://`)
    - Trailing slash or path: `ftp.yourdomain.com/public_html`
@@ -58,42 +57,15 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
 2. Go to **Settings** → **Secrets and variables** → **Actions**.
 3. Click **New repository secret** and add these three secrets:
 
-| Secret name | Value | Example |
-|-------------|--------|---------|
-| `CPANEL_HOST` | FTP server hostname | `ftp.example.com` |
-| `CPANEL_USERNAME` | FTP username | `myuser@example.com` |
-| `CPANEL_PASSWORD` | FTP password | *(your FTP password)* |
+| Secret name       | Value               | Example               |
+| ----------------- | ------------------- | --------------------- |
+| `CPANEL_HOST`     | FTP server hostname | `ftp.example.com`     |
+| `CPANEL_USERNAME` | FTP username        | `myuser@example.com`  |
+| `CPANEL_PASSWORD` | FTP password        | _(your FTP password)_ |
 
 These are the **only required secrets** for deployment.
 
-### Fix `getaddrinfo ENOTFOUND` (host not found)
-
-If deploy fails with **ENOTFOUND**, the FTP hostname in `CPANEL_HOST` is wrong or has no public DNS. Use your **server IP** instead:
-
-1. In cPanel, open **Server Information** (or **General Information** on the home screen).
-2. Copy **Shared IP Address** (e.g. `185.123.45.67`).
-3. On GitHub: **Settings → Secrets and variables → Actions → Variables** (not Secrets).
-4. Click **New repository variable**:
-   - Name: `CPANEL_FTP_IP`
-   - Value: your server IP (numbers and dots only)
-5. Re-run the workflow.
-
-The workflow uses `CPANEL_FTP_IP` when set, so you do not need to change `CPANEL_HOST`.
-
-**Test without editing secrets:** **Actions → Deploy to cPanel → Run workflow** and paste your server IP in the **ftp_host** field.
-
-### Optional secrets (contact form / reCAPTCHA)
-
-The contact form reads Vite env vars at **build time**. If you use EmailJS or reCAPTCHA, add the same keys from `.env.example` as optional secrets so the production build includes them:
-
-| Secret name | Purpose |
-|-------------|---------|
-| `VITE_EMAILJS_SERVICE_ID` | EmailJS service ID |
-| `VITE_EMAILJS_TEMPLATE_ID` | EmailJS template ID |
-| `VITE_EMAILJS_PUBLIC_KEY` | EmailJS public key |
-| `VITE_RECAPTCHA_SITE_KEY` | Google reCAPTCHA site key |
-
-If you skip these, the site still deploys; only the contact-related features may not work until you add the secrets and redeploy.
+The contact form uses reCAPTCHA and PHP mail (`api/contact.php`) — no extra GitHub secrets needed.
 
 ---
 
@@ -154,15 +126,16 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 
 ## Troubleshooting
 
-| Problem | What to try |
-|---------|-------------|
-| `Login authentication failed` | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret. |
-| `getaddrinfo ENOTFOUND` | Hostname in `CPANEL_HOST` is invalid or has no DNS. Add repository variable `CPANEL_FTP_IP` with your **Shared IP** from cPanel → Server Information. Or run workflow manually with **ftp_host** set to that IP. |
-| Connection timeout | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port. |
-| Site is blank or 404 | FTP account directory may not be `public_html`, or `server-dir` is wrong for your login. |
-| Nested `public_html/public_html` folder | FTP account is already rooted at `public_html`; keep `server-dir: ./` (do not add `./public_html/` again). |
-| Old files still showing | Clear browser cache or cPanel cache (e.g. LiteSpeed Cache). |
-| Contact form broken in production | Add the optional `VITE_*` secrets and redeploy. |
+| Problem                                 | What to try                                                                                                                                                                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Login authentication failed`           | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret.                                                                                                              |
+| `getaddrinfo ENOTFOUND`                 | `CPANEL_HOST` is wrong or has no public DNS. Copy **FTP Server** from cPanel → FTP Accounts exactly. If the hostname fails, set `CPANEL_HOST` to your **server IP** instead. Remove `ftp://`, paths, and port numbers. |
+| cPanel lists `ftp.yourdomain.com` but ENOTFOUND persists | That name may have **no DNS record** (common). Run `nslookup ftp.yourdomain.com 8.8.8.8`. Add a DNS **A record** for `ftp` → hosting server IP (DNS only in Cloudflare), or put the **server IP** from cPanel → Server Information in `CPANEL_HOST`. |
+| Connection timeout                      | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port.                                                                                                                                     |
+| Site is blank or 404                    | FTP account directory may not be `public_html`, or `server-dir` is wrong for your login.                                                                                                                               |
+| Nested `public_html/public_html` folder | FTP account is already rooted at `public_html`; keep `server-dir: ./` (do not add `./public_html/` again).                                                                                                             |
+| Old files still showing                 | Clear browser cache or cPanel cache (e.g. LiteSpeed Cache).                                                                                                                                                            |
+| Contact form broken in production       | Confirm `api/contact.php` exists on the server and PHP `mail()` is enabled by your host. |
 
 ### View deployment logs
 
@@ -180,8 +153,8 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 
 ## Files involved
 
-| File | Role |
-|------|------|
-| `.github/workflows/deploy-cpanel.yml` | CI/CD workflow: build + FTP upload |
-| `dist/` | Build output (generated locally and in CI; not committed) |
-| `docs/cpanel-deployment.md` | This setup guide |
+| File                                  | Role                                                      |
+| ------------------------------------- | --------------------------------------------------------- |
+| `.github/workflows/deploy-cpanel.yml` | CI/CD workflow: build + FTP upload                        |
+| `dist/`                               | Build output (generated locally and in CI; not committed) |
+| `docs/cpanel-deployment.md`           | This setup guide                                          |

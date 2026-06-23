@@ -16,12 +16,7 @@ export const SITE = {
   website: 'www.lunacottageafh.com',
   // TODO: add your WA DSHS Adult Family Home license number for a strong trust signal.
   license: '', // e.g. 'License #XXXXXX'
-  // EmailJS sends the branded HTML inquiry email (see .env.example for setup).
-  emailjsServiceId: import.meta.env.VITE_EMAILJS_SERVICE_ID ?? '',
-  emailjsTemplateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? '',
-  emailjsPublicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? '',
-  // Optional Google reCAPTCHA v3 site key — verified client-side before send.
-  recaptchaSiteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY ?? '',
+  recaptchaSiteKey: '6Le8Sy8tAAAAAEzYfK-UGuFiAq9iGitEN0XQO5Ou',
 } as const
 
 export const NAV_LINKS = [

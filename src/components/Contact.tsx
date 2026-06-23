@@ -1,9 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import emailjs from '@emailjs/browser'
 import { motion } from 'framer-motion'
 import SectionLabel from './SectionLabel'
 import { SITE } from '../data/content'
-import { buildInquiryEmailHtml, buildInquirySubject } from '../lib/inquiryEmail'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -12,11 +10,6 @@ const sms = (number: string) => `sms:${number.replace(/[^\d+]/g, '')}`
 
 const primaryPhone = SITE.phones.find((p) => p.primary) ?? SITE.phones[0]
 const otherPhones = SITE.phones.filter((p) => p !== primaryPhone)
-
-const hasFormService =
-  SITE.emailjsServiceId.length > 0 &&
-  SITE.emailjsTemplateId.length > 0 &&
-  SITE.emailjsPublicKey.length > 0
 
 async function getRecaptchaToken(siteKey: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -60,18 +53,13 @@ export default function Contact() {
 
     if (data.get('botcheck')) return
 
-    if (!hasFormService) {
-      setErrorMsg(fallbackMessage)
-      setStatus('error')
-      return
-    }
-
     setStatus('sending')
     setErrorMsg('')
 
     try {
+      let recaptchaToken = ''
       if (hasRecaptcha) {
-        await getRecaptchaToken(SITE.recaptchaSiteKey)
+        recaptchaToken = await getRecaptchaToken(SITE.recaptchaSiteKey)
       }
 
       const fullName = String(data.get('fullName') || '').trim()
@@ -84,36 +72,33 @@ export default function Contact() {
       const submittedAt = now.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'long' })
       const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-      const payload = {
-        fullName,
-        phone,
-        email,
-        role,
-        message,
-        submittedAt: `${submittedAt} (${timeZone})`,
-        pageUrl: window.location.href,
-        referrer: document.referrer || 'Direct visit',
-        language: navigator.language,
-      }
+      const response = await fetch('/api/contact.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName,
+          phone,
+          email,
+          role,
+          message,
+          submittedAt: `${submittedAt} (${timeZone})`,
+          pageUrl: window.location.href,
+          referrer: document.referrer || 'Direct visit',
+          language: navigator.language,
+          recaptchaToken,
+        }),
+      })
 
-      await emailjs.send(
-        SITE.emailjsServiceId,
-        SITE.emailjsTemplateId,
-        {
-          to_email: SITE.email,
-          reply_to: email,
-          subject: buildInquirySubject(fullName),
-          html_message: buildInquiryEmailHtml(payload),
-        },
-        { publicKey: SITE.emailjsPublicKey },
-      )
+      const result = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+
+      if (!response.ok || !result?.ok) {
+        throw new Error(result?.error || fallbackMessage)
+      }
 
       setStatus('sent')
       form.reset()
     } catch (err) {
-      const emailJsError =
-        err && typeof err === 'object' && 'text' in err ? String((err as { text: string }).text) : ''
-      setErrorMsg(emailJsError || (err instanceof Error ? err.message : fallbackMessage))
+      setErrorMsg(err instanceof Error ? err.message : fallbackMessage)
       setStatus('error')
     }
   }
