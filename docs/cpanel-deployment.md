@@ -6,7 +6,7 @@ This guide explains how to deploy the Vite/React site to cPanel hosting automati
 
 1. GitHub Actions checks out the code.
 2. Dependencies are installed and `npm run build` produces the static site in `dist/`.
-3. The contents of `dist/` are uploaded to your cPanel account over FTPS (FTP over TLS).
+3. The contents of `dist/` are uploaded to the **root of your FTP account** over FTPS (FTP over TLS). Set the FTP account directory to `public_html` in cPanel so the site files land in the right place.
 
 You can also run the workflow manually from the **Actions** tab → **Deploy to cPanel** → **Run workflow**.
 
@@ -16,7 +16,7 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
 
 - A GitHub repository with this project pushed to it.
 - cPanel hosting with **FTP** access enabled (standard on most shared hosting plans).
-- Your site should be served from `public_html/` (default for the main domain). If you use a subdomain or addon domain, note its document root path (see [Change the remote folder](#change-the-remote-folder) below).
+- Create an FTP account whose **Directory** is `public_html` (recommended). The workflow uploads to the FTP root (`./`), which is that folder—no extra `public_html` path in the workflow.
 
 ---
 
@@ -105,7 +105,9 @@ Your site should appear at your domain after the workflow finishes (allow a minu
 
 ### Change the remote folder
 
-By default, files upload to `public_html/` (main domain). To deploy elsewhere, edit `.github/workflows/deploy-cpanel.yml`:
+By default, files upload to the **FTP account root** (`server-dir: ./`). Use this when the FTP account is already scoped to `public_html` in cPanel.
+
+If you log in with the main cPanel FTP user (home directory is `/home/username/`), set a subfolder instead:
 
 ```yaml
 server-dir: ./public_html/
@@ -113,8 +115,9 @@ server-dir: ./public_html/
 
 Examples:
 
-- Subdomain folder: `./public_html/subdomain/`
-- Addon domain with its own root: path shown in cPanel → **Domains** → document root
+- FTP account rooted at `public_html`: `./` (default)
+- Main account, main domain: `./public_html/`
+- Subfolder on main account: `./public_html/subdomain/`
 
 ### FTP vs FTPS
 
@@ -144,7 +147,8 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 | `Login authentication failed` | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret. |
 | `getaddrinfo ENOTFOUND` | `CPANEL_HOST` does not exist in DNS. Open **cPanel → FTP Accounts** and copy **FTP Server** exactly. Try `nslookup` on your PC. Use the server hostname (e.g. `server123.host.com`) if `ftp.yourdomain.com` does not resolve. Update the secret and re-run the workflow. |
 | Connection timeout | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port. |
-| Site is blank or 404 | Wrong `server-dir`; ensure it matches the domain’s document root in cPanel. |
+| Site is blank or 404 | FTP account directory may not be `public_html`, or `server-dir` is wrong for your login. |
+| Nested `public_html/public_html` folder | FTP account is already rooted at `public_html`; keep `server-dir: ./` (do not add `./public_html/` again). |
 | Old files still showing | Clear browser cache or cPanel cache (e.g. LiteSpeed Cache). |
 | Contact form broken in production | Add the optional `VITE_*` secrets and redeploy. |
 
