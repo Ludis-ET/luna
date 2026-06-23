@@ -46,13 +46,9 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
    - Extra spaces before or after the hostname
    - Typo in the domain or server name
 
-   **Quick check:** On your PC, open Command Prompt or PowerShell and run:
+   **If the hostname does not resolve**, use your server’s **IP address** instead (from cPanel → **Server Information** or ask your host). Example: `185.123.45.67`
 
-   ```powershell
-   nslookup ftp.yourdomain.com
-   ```
-
-   If that fails, the hostname is wrong—use the exact **FTP Server** from cPanel or ask your hosting provider.
+   Do **not** include `ftp://`, `https://`, paths, or port numbers—hostname or IP only.
 
 ---
 
@@ -145,7 +141,7 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 | Problem | What to try |
 |---------|-------------|
 | `Login authentication failed` | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret. |
-| `getaddrinfo ENOTFOUND` | `CPANEL_HOST` does not exist in DNS. Open **cPanel → FTP Accounts** and copy **FTP Server** exactly. Try `nslookup` on your PC. Use the server hostname (e.g. `server123.host.com`) if `ftp.yourdomain.com` does not resolve. Update the secret and re-run the workflow. |
+| `getaddrinfo ENOTFOUND` | `CPANEL_HOST` is wrong or has no public DNS. Copy **FTP Server** from cPanel → FTP Accounts exactly. If the hostname fails, set `CPANEL_HOST` to your **server IP** instead. Remove `ftp://`, paths, and port numbers. |
 | Connection timeout | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port. |
 | Site is blank or 404 | FTP account directory may not be `public_html`, or `server-dir` is wrong for your login. |
 | Nested `public_html/public_html` folder | FTP account is already rooted at `public_html`; keep `server-dir: ./` (do not add `./public_html/` again). |
