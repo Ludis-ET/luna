@@ -66,6 +66,22 @@ You can also run the workflow manually from the **Actions** tab → **Deploy to 
 
 These are the **only required secrets** for deployment.
 
+### Fix `getaddrinfo ENOTFOUND` (host not found)
+
+If deploy fails with **ENOTFOUND**, the FTP hostname in `CPANEL_HOST` is wrong or has no public DNS. Use your **server IP** instead:
+
+1. In cPanel, open **Server Information** (or **General Information** on the home screen).
+2. Copy **Shared IP Address** (e.g. `185.123.45.67`).
+3. On GitHub: **Settings → Secrets and variables → Actions → Variables** (not Secrets).
+4. Click **New repository variable**:
+   - Name: `CPANEL_FTP_IP`
+   - Value: your server IP (numbers and dots only)
+5. Re-run the workflow.
+
+The workflow uses `CPANEL_FTP_IP` when set, so you do not need to change `CPANEL_HOST`.
+
+**Test without editing secrets:** **Actions → Deploy to cPanel → Run workflow** and paste your server IP in the **ftp_host** field.
+
 ### Optional secrets (contact form / reCAPTCHA)
 
 The contact form reads Vite env vars at **build time**. If you use EmailJS or reCAPTCHA, add the same keys from `.env.example` as optional secrets so the production build includes them:
@@ -141,7 +157,7 @@ Only pushes to `main` trigger deploys. To use another branch, change `branches` 
 | Problem | What to try |
 |---------|-------------|
 | `Login authentication failed` | Re-check `CPANEL_USERNAME` and `CPANEL_PASSWORD`. Reset the FTP password in cPanel and update the secret. |
-| `getaddrinfo ENOTFOUND` | `CPANEL_HOST` is wrong or has no public DNS. Copy **FTP Server** from cPanel → FTP Accounts exactly. If the hostname fails, set `CPANEL_HOST` to your **server IP** instead. Remove `ftp://`, paths, and port numbers. |
+| `getaddrinfo ENOTFOUND` | Hostname in `CPANEL_HOST` is invalid or has no DNS. Add repository variable `CPANEL_FTP_IP` with your **Shared IP** from cPanel → Server Information. Or run workflow manually with **ftp_host** set to that IP. |
 | Connection timeout | Confirm FTP is enabled; try `protocol: ftp` or ask your host for the correct port. |
 | Site is blank or 404 | FTP account directory may not be `public_html`, or `server-dir` is wrong for your login. |
 | Nested `public_html/public_html` folder | FTP account is already rooted at `public_html`; keep `server-dir: ./` (do not add `./public_html/` again). |

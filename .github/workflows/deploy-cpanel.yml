@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      ftp_host:
+        description: Optional FTP host or IP (overrides CPANEL_HOST secret for this run)
+        required: false
+        type: string
 
 concurrency:
   group: deploy-cpanel-${{ github.ref }}
@@ -21,7 +26,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -30,7 +35,6 @@ jobs:
       - name: Build site
         run: npm run build
         env:
-          # Optional: add these as repository secrets if your build needs them.
           VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
           VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
           VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
@@ -39,19 +43,46 @@ jobs:
       - name: Prepare FTP host
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_FTP_IP: ${{ vars.CPANEL_FTP_IP }}
+          FTP_HOST_INPUT: ${{ github.event.inputs.ftp_host }}
         run: |
-          HOST=$(printf '%s' "$CPANEL_HOST" | tr -d '\r\n' | sed -E \
+          if [ -n "$FTP_HOST_INPUT" ]; then
+            RAW="$FTP_HOST_INPUT"
+            echo "Using manual workflow input for FTP host."
+          elif [ -n "$CPANEL_FTP_IP" ]; then
+            RAW="$CPANEL_FTP_IP"
+            echo "Using CPANEL_FTP_IP repository variable."
+          else
+            RAW="$CPANEL_HOST"
+            echo "Using CPANEL_HOST repository secret."
+          fi
+
+          HOST=$(printf '%s' "$RAW" | tr -d '\r\n' | sed -E \
             -e 's|^["'\'']||; s|["'\'']$||' \
             -e 's|^[Ff][Tt][Pp][Ss]*://||' \
             -e 's|^[Ss][Ff][Tt][Pp]://||' \
             -e 's|/.*||' \
             -e 's|:.*||' \
             -e 's/[[:space:]]//g')
+
           if [ -z "$HOST" ]; then
-            echo "::error::CPANEL_HOST secret is empty. Add the FTP server from cPanel → FTP Accounts."
+            echo "::error::FTP host is empty. Set CPANEL_HOST secret or CPANEL_FTP_IP variable (server IP from cPanel)."
             exit 1
           fi
-          echo "Using FTP host: $HOST"
+
+          if printf '%s' "$HOST" | grep -q '@'; then
+            echo "::error::FTP host must be a server name or IP, not an email/username."
+            echo "Put the username in CPANEL_USERNAME, not CPANEL_HOST."
+            exit 1
+          fi
+
+          echo "FTP host length: ${#HOST} characters"
+          if printf '%s' "$HOST" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "FTP host type: IPv4"
+          else
+            echo "FTP host type: hostname"
+          fi
+
           echo "FTP_HOST=$HOST" >> "$GITHUB_ENV"
 
       - name: Deploy to cPanel via FTP
